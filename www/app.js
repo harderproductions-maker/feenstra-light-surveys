@@ -1,6 +1,7 @@
 import { Capacitor, registerPlugin } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
+import readXlsxFile from 'read-excel-file/browser';
 
 const LightSensor = registerPlugin('LightSensor');
 const CameraCapture = registerPlugin('CameraCapture');
@@ -29,7 +30,16 @@ const projectImportInput = document.querySelector('#project-import-input');
 let database;
 let stateReady;
 let stateLoadError = null;
-let state = { surveys: [], activeId: null, activeEntryId: null, sensorCalibration: initialCalibration };
+let state = {
+  surveys: [],
+  buildingChecks: [],
+  activeId: null,
+  activeEntryId: null,
+  sensorCalibration: initialCalibration
+};
+let currentView = 'home';
+let activeCheckProjectId = null;
+let activeCheckId = null;
 let liveLux = null;
 let liveCalibratedLux = null;
 let liveLuxAt = null;
@@ -128,6 +138,34 @@ function normalizeSurvey(survey) {
   return normalized;
 }
 
+function normalizeCheckProject(project) {
+  if (!project || typeof project !== 'object') {
+    throw new Error('An imported building-check project is invalid.');
+  }
+  return {
+    ...project,
+    id: project.id || crypto.randomUUID(),
+    buildingName: String(project.buildingName || ''),
+    inspectorName: String(project.inspectorName || ''),
+    inspectionDate: String(project.inspectionDate || new Date().toISOString().slice(0, 10)),
+    checks: (Array.isArray(project.checks) ? project.checks : []).map((check) => ({
+      ...check,
+      id: check.id || crypto.randomUUID(),
+      title: String(check.title || ''),
+      location: String(check.location || ''),
+      description: String(check.description || ''),
+      category: String(check.category || ''),
+      reference: String(check.reference || ''),
+      status: ['open', 'in-progress', 'repaired', 'verified'].includes(check.status) ? check.status : 'open',
+      condition: ['not-assessed', 'good', 'fair', 'poor', 'critical'].includes(check.condition) ? check.condition : 'not-assessed',
+      severity: ['not-assessed', 'low', 'moderate', 'high', 'critical'].includes(check.severity) ? check.severity : 'not-assessed',
+      notes: String(check.notes || ''),
+      photos: Array.isArray(check.photos) ? check.photos : [],
+      history: Array.isArray(check.history) ? check.history : []
+    }))
+  };
+}
+
 function normalizeCalibration(calibration) {
   if (!calibration || !Number.isFinite(Number(calibration.factor)) || Number(calibration.factor) <= 0) {
     return initialCalibration;
@@ -179,8 +217,12 @@ async function loadState() {
     if (!Array.isArray(saved.surveys)) {
       throw new Error('Saved project data is invalid. Existing local data has been left untouched.');
     }
+    if (saved.buildingChecks !== undefined && !Array.isArray(saved.buildingChecks)) {
+      throw new Error('Saved building check data is invalid. Existing local data has been left untouched.');
+    }
     state = {
       surveys: saved.surveys.map(normalizeSurvey),
+      buildingChecks: (Array.isArray(saved.buildingChecks) ? saved.buildingChecks : []).map(normalizeCheckProject),
       activeId: saved.activeId || null,
       activeEntryId: saved.activeEntryId || null,
       sensorCalibration: normalizeCalibration(saved.sensorCalibration)
@@ -197,6 +239,7 @@ async function loadState() {
     }
     state = {
       surveys: legacy.surveys.map(normalizeSurvey),
+      buildingChecks: [],
       activeId: legacy.activeId || null,
       activeEntryId: null,
       sensorCalibration: initialCalibration
@@ -272,8 +315,438 @@ function formatLux(value) {
   return Number(value).toLocaleString(undefined, { maximumFractionDigits: 2 });
 }
 
+function navigateView(view, options = {}) {
+  if (sensorRunning && view !== 'lighting') void stopSensor();
+  currentView = view;
+  if (options.projectId !== undefined) activeCheckProjectId = options.projectId;
+  if (options.checkId !== undefined) activeCheckId = options.checkId;
+  if (options.push !== false) history.pushState({ view, projectId: activeCheckProjectId, checkId: activeCheckId }, '');
+  render();
+}
+
+function renderHome() {
+  const checkCount = state.buildingChecks.reduce((total, project) => total + project.checks.length, 0);
+  const openCount = state.buildingChecks.reduce((total, project) =>
+    total + project.checks.filter((check) => check.status !== 'verified').length, 0);
+  workspace.innerHTML = `
+    <div class="home-view">
+      <p class="eyebrow">OPERATIONS & OHS WORKSPACE</p>
+      <h1>Good ${new Date().getHours() < 12 ? 'morning' : 'day'}.</h1>
+      <p class="home-intro">Your fieldwork, inspections, and repair follow-ups in one place.</p>
+      <div class="home-cards">
+        <article class="home-card lighting-card">
+          <div class="home-card-icon">lx</div><p class="eyebrow">LIGHTING SURVEYS</p>
+          <h2>Measure and record lighting conditions</h2>
+          <p>${state.surveys.length} ${state.surveys.length === 1 ? 'project' : 'projects'} saved on this device</p>
+          <button type="button" class="button primary" data-action="lighting">Open lighting surveys →</button>
+        </article>
+        <article class="home-card checks-card">
+          <div class="home-card-icon">✓</div><p class="eyebrow">BUILDING CHECKS</p>
+          <h2>Inspect conditions and follow repairs</h2>
+          <p>${state.buildingChecks.length} ${state.buildingChecks.length === 1 ? 'building' : 'buildings'} · ${checkCount} checks · ${openCount} need attention</p>
+          <button type="button" class="button primary" data-action="checks">Open building checks →</button>
+        </article>
+      </div>
+      <section class="home-quick-actions">
+        <h2>Quick actions</h2>
+        <button class="button secondary" type="button" data-action="new">＋ Start a lighting project</button>
+        <button class="button secondary" type="button" data-action="import-checks">⇧ Import building checks</button>
+      </section>
+      <p class="workspace-footer">Your records are stored on this device. Export reports or share project data to keep a copy.</p>
+    </div>`;
+}
+
+function renderCheckProjects() {
+  const projects = state.buildingChecks;
+  workspace.innerHTML = `
+    <div class="checks-view">
+      <div class="page-heading">
+        <div><p class="eyebrow">OPERATIONS & OHS</p><h1>Building checks</h1>
+        <p>Import your building checklist, record condition and severity, and track repairs through verification.</p></div>
+        <button class="button primary" type="button" data-action="import-checks">Import checks</button>
+      </div>
+      ${projects.length ? `<div class="building-grid">${projects.map((project) => {
+        const open = project.checks.filter((check) => check.status !== 'verified').length;
+        const critical = project.checks.filter((check) => check.severity === 'critical' && check.status !== 'verified').length;
+        return `<article class="building-card">
+          <div class="building-card-top"><span class="eyebrow">BUILDING CHECKLIST</span><span class="status-chip ${open ? 'attention' : 'complete'}">${open ? `${open} open` : 'Up to date'}</span></div>
+          <h2>${escapeHtml(project.buildingName)}</h2><p>${escapeHtml(project.inspectorName)} · Imported ${escapeHtml(formatDateTime(project.createdAt))}</p>
+          <div class="building-stats"><span><strong>${project.checks.length}</strong> checks</span><span><strong>${critical}</strong> critical</span></div>
+          <button class="button dark" type="button" data-action="open-check-project" data-project-id="${escapeHtml(project.id)}">View checks →</button>
+        </article>`;
+      }).join('')}</div>` : `
+        <div class="empty-state compact-empty"><div class="empty-stamp">✓</div><h2>Start with your building checklist</h2>
+          <p>Import your CSV or Excel list. Each item becomes its own check record and individual report, with condition, severity, photos, and repair history.</p>
+          <button class="button primary" type="button" data-action="import-checks">Import check list →</button>
+        </div>`}
+      <div class="import-help"><strong>Supported spreadsheet columns:</strong> Check / Item / Name (required), plus optional Location / Area, Description, Category, Reference / Standard, Condition, and Severity. <button class="text-button" type="button" data-action="download-check-template">Download CSV template</button></div>
+    </div>`;
+}
+
+function statusLabel(status) {
+  return ({ open: 'Open', 'in-progress': 'In progress', repaired: 'Repaired', verified: 'Verified' })[status] || 'Open';
+}
+
+function renderCheckProject() {
+  const project = state.buildingChecks.find((item) => item.id === activeCheckProjectId);
+  if (!project) {
+    navigateView('checks', { push: false });
+    return;
+  }
+  const checks = project.checks.map((check) => `
+    <article class="check-card">
+      <div class="check-card-main">
+        <span class="status-chip ${check.status === 'verified' ? 'complete' : check.severity === 'critical' || check.severity === 'high' ? 'attention' : ''}">${escapeHtml(statusLabel(check.status))}</span>
+        <h2>${escapeHtml(check.title)}</h2>
+        <p>${escapeHtml([check.location, check.category].filter(Boolean).join(' · ') || 'Location not specified')}</p>
+        <div class="check-tags"><span>Condition: ${escapeHtml(check.condition.replaceAll('-', ' '))}</span><span>Severity: ${escapeHtml(check.severity.replaceAll('-', ' '))}</span></div>
+      </div>
+      <div class="check-card-actions">
+        <button class="button secondary" type="button" data-action="open-check" data-check-id="${escapeHtml(check.id)}">Open check</button>
+        <button class="button secondary" type="button" data-action="export-check" data-check-id="${escapeHtml(check.id)}">Individual report PDF</button>
+      </div>
+    </article>`).join('');
+  workspace.innerHTML = `
+    <div class="checks-view">
+      <div class="page-heading"><div><p class="eyebrow">BUILDING CHECKS · ${escapeHtml(formatDate(project.inspectionDate))}</p>
+        <h1>${escapeHtml(project.buildingName)}</h1><p>Inspector: ${escapeHtml(project.inspectorName)} · ${project.checks.length} individual checks / reports</p></div>
+        <button class="button secondary" type="button" data-action="checks">All buildings</button>
+      </div>
+      <div class="check-list">${checks}</div>
+    </div>`;
+}
+
+function buildCheckReport(project, check) {
+  const photos = (check.photos || []).map((photo) => `<figure><img src="${escapeHtml(photo.data)}" alt="Condition evidence for ${escapeHtml(check.title)}"><figcaption>${escapeHtml(formatDateTime(photo.createdAt))} · ${escapeHtml(photo.caption || 'Inspection photo')}</figcaption></figure>`).join('');
+  const history = (check.history || []).map((item) => `
+    <article class="history-item"><h3>${escapeHtml(formatDateTime(item.createdAt))} · ${escapeHtml(statusLabel(item.status))}</h3>
+      <p>Condition: ${escapeHtml(item.condition.replaceAll('-', ' '))} · Severity: ${escapeHtml(item.severity.replaceAll('-', ' '))}</p>
+      ${item.notes ? `<p>${escapeHtml(item.notes)}</p>` : ''}
+      ${(item.photoIds || []).length ? `<p>${item.photoIds.length} photo(s) attached to this update. See the condition photos above.</p>` : ''}
+    </article>`).join('');
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Building check - ${escapeHtml(check.title)}</title><style>
+    *{box-sizing:border-box}body{max-width:900px;margin:30px auto;padding:0 24px;color:#192c28;font:14px/1.5 Arial,sans-serif}header{border-bottom:3px solid #355449;padding-bottom:16px}h1{font-size:27px}h2{margin-top:25px}h3{margin-bottom:5px}.meta{color:#53645b}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}.summary div{padding:12px;background:#f1f4ec;border:1px solid #dce2d8}figure{display:inline-block;width:30%;margin:8px 2% 12px 0;vertical-align:top}figure img{width:100%;max-height:280px;object-fit:contain}.history-item{border-top:1px solid #dce2d8;padding:8px 0}.notes{white-space:pre-wrap}@media print{body{margin:12mm auto}}
+    </style></head><body><header><p>FEENSTRA LIGHT SURVEYS · BUILDING CONDITION RECORD</p><h1>${escapeHtml(check.title)}</h1>
+    <p class="meta"><strong>Building:</strong> ${escapeHtml(project.buildingName)} · <strong>Inspector:</strong> ${escapeHtml(project.inspectorName)}</p>
+    <p class="meta"><strong>Location:</strong> ${escapeHtml(check.location || 'Not specified')} · <strong>Inspection date:</strong> ${escapeHtml(formatDate(project.inspectionDate))}</p></header>
+    <section class="summary"><div><strong>Status:</strong> ${escapeHtml(statusLabel(check.status))}</div><div><strong>Condition:</strong> ${escapeHtml(check.condition.replaceAll('-', ' '))}</div><div><strong>Severity:</strong> ${escapeHtml(check.severity.replaceAll('-', ' '))}</div></section>
+    ${check.description ? `<p><strong>Check description:</strong> ${escapeHtml(check.description)}</p>` : ''}${check.reference ? `<p><strong>Reference:</strong> ${escapeHtml(check.reference)}</p>` : ''}
+    <h2>Current inspector notes</h2><p class="notes">${escapeHtml(check.notes || 'No notes recorded.')}</p><h2>Condition photos</h2>${photos || '<p>No photos attached.</p>'}
+    <h2>Repair and inspection history</h2>${history || '<p>No updates recorded.</p>'}</body></html>`;
+}
+
+function renderCheckDetail() {
+  const project = state.buildingChecks.find((item) => item.id === activeCheckProjectId);
+  const check = project?.checks.find((item) => item.id === activeCheckId);
+  if (!project || !check) {
+    navigateView('checks', { push: false });
+    return;
+  }
+  const photos = check.photos.map((photo) => `<figure class="check-photo"><img src="${escapeHtml(photo.data)}" alt="Condition photo for ${escapeHtml(check.title)}"><figcaption>${escapeHtml(formatDateTime(photo.createdAt))}${photo.caption ? ` · ${escapeHtml(photo.caption)}` : ''}</figcaption></figure>`).join('');
+  const history = [...check.history].reverse().map((item) => `
+    <article class="history-item"><div class="history-heading"><strong>${escapeHtml(formatDateTime(item.createdAt))}</strong><span class="status-chip">${escapeHtml(statusLabel(item.status))}</span></div>
+      <p>Condition: ${escapeHtml(item.condition.replaceAll('-', ' '))} · Severity: ${escapeHtml(item.severity.replaceAll('-', ' '))}</p>
+      ${item.notes ? `<p class="notes">${escapeHtml(item.notes)}</p>` : ''}
+      <div class="history-photos">${(item.photoIds || []).map((id) => {
+        const photo = check.photos.find((itemPhoto) => itemPhoto.id === id);
+        return photo ? `<img src="${escapeHtml(photo.data)}" alt="Repair history photo">` : '';
+      }).join('')}</div>
+    </article>`).join('');
+  workspace.innerHTML = `
+    <div class="check-detail">
+      <div class="breadcrumbs"><button class="text-button" type="button" data-action="checks">Building checks</button><span>›</span><span>${escapeHtml(project.buildingName)}</span></div>
+      <div class="page-heading"><div><p class="eyebrow">${escapeHtml(check.category || 'BUILDING CHECK')}</p><h1>${escapeHtml(check.title)}</h1>
+        <p>${escapeHtml(check.location || 'Location not specified')} · ${escapeHtml(project.buildingName)}</p></div>
+        <div class="detail-actions"><button class="button primary" type="button" data-action="update-check">Update check</button>
+        <button class="button secondary" type="button" data-action="export-check">Export individual PDF</button></div>
+      </div>
+      <div class="condition-overview"><span class="status-chip ${check.status === 'verified' ? 'complete' : 'attention'}">${escapeHtml(statusLabel(check.status))}</span>
+        <div><span>Condition</span><strong>${escapeHtml(check.condition.replace('-', ' '))}</strong></div>
+        <div><span>Severity</span><strong>${escapeHtml(check.severity.replaceAll('-', ' '))}</strong></div>
+        <div><span>Last updated</span><strong>${escapeHtml(formatDateTime(check.updatedAt || check.createdAt))}</strong></div>
+      </div>
+      ${check.description ? `<section class="detail-panel"><h2>Check description</h2><p>${escapeHtml(check.description)}</p>${check.reference ? `<p class="muted">Reference: ${escapeHtml(check.reference)}</p>` : ''}</section>` : ''}
+      <section class="detail-panel"><h2>Inspector notes</h2><p class="notes">${escapeHtml(check.notes || 'No notes recorded.')}</p></section>
+      <section class="detail-panel"><h2>Condition photos <span class="count">${check.photos.length}</span></h2><div class="check-photo-grid">${photos || '<p class="empty-list">No condition photos attached yet.</p>'}</div></section>
+      <section class="detail-panel"><h2>Repair and inspection history</h2><div class="history-list">${history || '<p class="empty-list">Updates and repair evidence will appear here.</p>'}</div></section>
+    </div>`;
+}
+
+function parseCsv(text) {
+  const rows = [];
+  let row = [];
+  let cell = '';
+  let quoted = false;
+  for (let index = 0; index < text.length; index += 1) {
+    const character = text[index];
+    if (quoted && character === '"' && text[index + 1] === '"') {
+      cell += '"';
+      index += 1;
+    } else if (character === '"') {
+      quoted = !quoted;
+    } else if (!quoted && character === ',') {
+      row.push(cell);
+      cell = '';
+    } else if (!quoted && (character === '\n' || character === '\r')) {
+      if (character === '\r' && text[index + 1] === '\n') index += 1;
+      row.push(cell);
+      if (row.some((value) => value.trim())) rows.push(row);
+      row = [];
+      cell = '';
+    } else {
+      cell += character;
+    }
+  }
+  row.push(cell);
+  if (row.some((value) => value.trim())) rows.push(row);
+  if (quoted) throw new Error('CSV file has an unclosed quoted field.');
+  if (rows.length < 2) throw new Error('The checklist file needs a header row and at least one check.');
+  const headers = rows[0].map((header) => String(header).trim().replace(/^\uFEFF/, ''));
+  return rows.slice(1).map((values) => Object.fromEntries(
+    headers.map((header, index) => [header, values[index] || ''])
+  ));
+}
+
+function normalizeImportHeader(value) {
+  return String(value).trim().toLocaleLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function getImportValue(row, aliases) {
+  const entries = Object.entries(row);
+  const match = entries.find(([header]) => aliases.includes(normalizeImportHeader(header)));
+  return match ? String(match[1] ?? '').trim() : '';
+}
+
+async function readBuildingCheckRows(file) {
+  if (file.size > 25 * 1024 * 1024) throw new Error('Checklist files must be smaller than 25 MB.');
+  if (/\.csv$/i.test(file.name) || file.type === 'text/csv') return parseCsv(await file.text());
+  if (!/\.xlsx$/i.test(file.name)) throw new Error('Choose a CSV or Excel (.xlsx) checklist.');
+  const rows = (await readXlsxFile(file)).map((row) => row.map((value) =>
+    value instanceof Date ? value.toISOString().slice(0, 10) : value === null || value === undefined ? '' : String(value)
+  ));
+  if (rows.length < 2) throw new Error('The checklist worksheet needs a header row and at least one check.');
+  const headers = rows[0].map((header) => String(header).trim());
+  return rows.slice(1).map((values) => Object.fromEntries(
+    headers.map((header, index) => [header, values[index] || ''])
+  ));
+}
+
+async function importBuildingChecks(form) {
+  await stateReady;
+  if (stateLoadError) throw stateLoadError;
+  const values = new FormData(form);
+  const buildingName = String(values.get('buildingName') || '').trim();
+  const inspectorName = String(values.get('inspectorName') || '').trim();
+  const file = form.elements.checksFile.files?.[0];
+  if (!buildingName || !inspectorName || !file) throw new Error('Building name, inspector name, and a checklist file are required.');
+  const rows = await readBuildingCheckRows(file);
+  if (rows.length > 1000) throw new Error('A checklist can contain at most 1,000 rows.');
+  const checkNameAliases = ['check', 'check name', 'check item', 'checklist item', 'item', 'name', 'inspection item', 'inspection point', 'check point', 'requirement'];
+  const checks = rows.map((row, index) => {
+    const title = getImportValue(row, checkNameAliases);
+    if (!title) {
+      if (Object.values(row).some((value) => String(value).trim())) {
+        throw new Error(`Checklist row ${index + 2} contains data but has no check name.`);
+      }
+      return null;
+    }
+    const createdAt = new Date().toISOString();
+    const severity = normalizeSeverity(getImportValue(row, ['severity', 'priority', 'risk level']), index + 2);
+    const condition = normalizeCondition(getImportValue(row, ['condition', 'current condition']), index + 2);
+    const status = normalizeCheckStatus(getImportValue(row, ['status', 'repair status']), index + 2);
+    const check = {
+      id: crypto.randomUUID(),
+      title,
+      location: getImportValue(row, ['location', 'area', 'room', 'building area', 'zone']),
+      description: getImportValue(row, ['description', 'details', 'check description', 'observation']),
+      category: getImportValue(row, ['category', 'system', 'trade', 'section']),
+      reference: getImportValue(row, ['reference', 'standard', 'regulation', 'clause', 'reference standard']),
+      status,
+      condition,
+      severity,
+      notes: '',
+      photos: [],
+      history: [{ id: crypto.randomUUID(), createdAt, status, condition, severity, notes: 'Checklist item imported; condition and severity remain unassessed unless provided in the checklist.', photoIds: [] }],
+      createdAt,
+      updatedAt: createdAt
+    };
+    return check;
+  }).filter(Boolean);
+  if (!checks.length) throw new Error('No check names found. Include a column named Check, Item, Name, or Inspection Item.');
+  const project = normalizeCheckProject({
+    id: crypto.randomUUID(),
+    buildingName,
+    inspectorName,
+    inspectionDate: new Date().toISOString().slice(0, 10),
+    createdAt: new Date().toISOString(),
+    sourceFileName: file.name,
+    checks
+  });
+  const saved = await commit({
+    ...state,
+    buildingChecks: [project, ...state.buildingChecks]
+  });
+  if (saved) {
+    form.reset();
+    document.querySelector('#check-import-dialog').close();
+    navigateView('check-project', { projectId: project.id });
+    window.alert(`Imported ${checks.length} checks for ${buildingName}. Each check can be inspected and reported separately.`);
+  }
+}
+
+function openCheckUpdateDialog() {
+  const project = state.buildingChecks.find((item) => item.id === activeCheckProjectId);
+  const check = project?.checks.find((item) => item.id === activeCheckId);
+  if (!check) return;
+  const form = document.querySelector('#check-update-form');
+  form.reset();
+  form.elements.status.value = check.status;
+  form.elements.condition.value = check.condition;
+  form.elements.severity.value = check.severity;
+  form.elements.notes.value = check.notes;
+  document.querySelector('#check-update-title').textContent = `Update: ${check.title}`;
+  document.querySelector('#check-update-dialog').showModal();
+}
+
+async function saveCheckUpdate(form) {
+  const project = state.buildingChecks.find((item) => item.id === activeCheckProjectId);
+  const check = project?.checks.find((item) => item.id === activeCheckId);
+  if (!project || !check) throw new Error('The selected building check is no longer available.');
+  const values = new FormData(form);
+  const status = String(values.get('status'));
+  const condition = String(values.get('condition'));
+  const severity = String(values.get('severity'));
+  const notes = String(values.get('notes') || '').trim();
+  if (status === 'verified' && check.status !== 'repaired' && check.status !== 'verified') {
+    throw new Error('Mark the check as repaired before recording verification.');
+  }
+  if (status === 'repaired' && (!notes || notes === check.notes)) {
+    throw new Error('Add a new update note describing the repair before marking this check repaired.');
+  }
+  const files = [...(form.elements.photos.files || [])];
+  if (files.length > 10) throw new Error('Attach no more than 10 photos in one check update.');
+  const photos = await Promise.all(files.map(async (file) => {
+    if (!file.type.startsWith('image/')) throw new Error(`${file.name} is not an image file.`);
+    if (file.size > 12 * 1024 * 1024) throw new Error(`${file.name} is larger than 12 MB.`);
+    return {
+      id: crypto.randomUUID(),
+      data: await fileToDataUrl(file),
+      caption: notes || `${condition.replace('-', ' ')} · ${severity} severity`,
+      createdAt: new Date().toISOString()
+    };
+  }));
+  const createdAt = new Date().toISOString();
+  const updated = {
+    ...check,
+    status,
+    condition,
+    severity,
+    notes,
+    updatedAt: createdAt,
+    photos: [...check.photos, ...photos],
+    history: [...check.history, {
+      id: crypto.randomUUID(),
+      createdAt,
+      status,
+      condition,
+      severity,
+      notes,
+      photoIds: photos.map((photo) => photo.id)
+    }]
+  };
+  const buildingChecks = state.buildingChecks.map((item) => item.id === project.id
+    ? { ...item, checks: item.checks.map((child) => child.id === check.id ? updated : child) }
+    : item);
+  if (await commit({ ...state, buildingChecks })) {
+    form.reset();
+    document.querySelector('#check-update-dialog').close();
+  }
+}
+
+async function exportBuildingCheckReport() {
+  const project = state.buildingChecks.find((item) => item.id === activeCheckProjectId);
+  const check = project?.checks.find((item) => item.id === activeCheckId);
+  if (!project || !check) throw new Error('Select a building check before exporting its report.');
+  await downloadReport(buildCheckReport(project, check), { buildingName: `${project.buildingName}-${check.title}` }, check.id);
+}
+
+async function downloadCheckTemplate() {
+  const sample = [
+    ['Check', 'Location', 'Description', 'Category', 'Reference', 'Condition', 'Severity'],
+    ['Emergency lighting', 'North stairwell', 'Confirm emergency lighting test operation', 'Electrical', 'Site inspection schedule', 'Not assessed', 'Medium'],
+    ['Handrail condition', 'Level 1 landing', 'Check fixings and surface condition', 'Access and egress', '', 'Poor', 'High']
+  ].map((row) => row.map((value) => `"${value.replaceAll('"', '""')}"`).join(',')).join('\r\n');
+  const filename = 'Feenstra-Building-Checks-Template.csv';
+  if (Capacitor.isNativePlatform()) {
+    const saved = await Filesystem.writeFile({ path: filename, data: sample, directory: Directory.Cache });
+    await Share.share({ title: 'Building checks import template', url: saved.uri, dialogTitle: 'Save or share CSV template' });
+  } else {
+    const url = URL.createObjectURL(new Blob([sample], { type: 'text/csv;charset=utf-8' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  }
+}
+
+function normalizeCondition(value, rowNumber) {
+  const normalized = normalizeImportHeader(value);
+  if (normalized === 'not assessed' || normalized === 'unknown' || normalized === 'n a' || !normalized) return 'not-assessed';
+  if (['good', 'fair', 'poor', 'critical'].includes(normalized)) return normalized;
+  throw new Error(`Unrecognized condition “${value}”${rowNumber ? ` in checklist row ${rowNumber}` : ''}. Use not assessed, good, fair, poor, or critical.`);
+}
+
+function normalizeSeverity(value, rowNumber) {
+  const normalized = normalizeImportHeader(value);
+  if (normalized === 'medium') return 'moderate';
+  if (['low', 'moderate', 'high', 'critical'].includes(normalized)) return normalized;
+  if (!normalized || normalized === 'not assessed' || normalized === 'unknown') return 'not-assessed';
+  throw new Error(`Unrecognized severity “${value}”${rowNumber ? ` in checklist row ${rowNumber}` : ''}. Use not assessed, low, medium, moderate, high, or critical.`);
+}
+
+function normalizeCheckStatus(value, rowNumber) {
+  const normalized = normalizeImportHeader(value);
+  if (normalized === 'in progress' || normalized === 'under repair' || normalized === 'underway' || normalized === 'repairing') return 'in-progress';
+  if (normalized === 'fixed' || normalized === 'complete' || normalized === 'completed') return 'repaired';
+  if (normalized === 'outstanding' || normalized === 'not started') return 'open';
+  if (['open', 'repaired', 'verified'].includes(normalized)) return normalized;
+  if (!normalized) return 'open';
+  throw new Error(`Unrecognized status “${value}”${rowNumber ? ` in checklist row ${rowNumber}` : ''}. Use open, in progress, repaired, or verified.`);
+}
+
 function render() {
   renderSurveyList();
+  const homeButton = document.querySelector('#home-button');
+  const backButton = document.querySelector('#back-button');
+  const lightingNav = document.querySelector('[data-view="lighting"]');
+  const checksNav = document.querySelector('[data-view="checks"]');
+  const homeNav = document.querySelector('[data-view="home"]');
+  homeButton.hidden = currentView === 'home';
+  backButton.hidden = currentView === 'home';
+  homeNav.classList.toggle('active', currentView === 'home');
+  lightingNav.classList.toggle('active', currentView === 'lighting');
+  checksNav.classList.toggle('active', ['checks', 'check-project', 'check-detail'].includes(currentView));
+  surveyList.hidden = currentView !== 'lighting';
+  document.querySelector('.rail-heading').hidden = currentView !== 'lighting';
+  document.querySelector('#new-survey').hidden = currentView !== 'lighting';
+  document.querySelector('#import-project').hidden = currentView !== 'lighting';
+  if (currentView === 'home') {
+    renderHome();
+    return;
+  }
+  if (currentView === 'checks') {
+    renderCheckProjects();
+    return;
+  }
+  if (currentView === 'check-project') {
+    renderCheckProject();
+    return;
+  }
+  if (currentView === 'check-detail') {
+    renderCheckDetail();
+    return;
+  }
   const survey = activeSurvey();
   if (!survey) {
     workspace.innerHTML = `
@@ -858,8 +1331,49 @@ workspace.addEventListener('click', async (event) => {
     return;
   }
   const survey = activeSurvey();
+  if (button.dataset.action === 'lighting') {
+    navigateView('lighting');
+    return;
+  }
+  if (button.dataset.action === 'checks') {
+    navigateView('checks');
+    return;
+  }
+  if (button.dataset.action === 'import-checks') {
+    document.querySelector('#check-import-dialog').showModal();
+    return;
+  }
+  if (button.dataset.action === 'open-check-project') {
+    navigateView('check-project', { projectId: button.dataset.projectId });
+    return;
+  }
+  if (button.dataset.action === 'open-check') {
+    navigateView('check-detail', { checkId: button.dataset.checkId });
+    return;
+  }
+  if (button.dataset.action === 'update-check') {
+    openCheckUpdateDialog();
+    return;
+  }
+  if (button.dataset.action === 'export-check') {
+    try {
+      await exportBuildingCheckReport();
+    } catch (error) {
+      alertError(error, 'Could not export the building check report.');
+    }
+    return;
+  }
+  if (button.dataset.action === 'download-check-template') {
+    try {
+      await downloadCheckTemplate();
+    } catch (error) {
+      alertError(error, 'Could not share the building checks template.');
+    }
+    return;
+  }
   switch (button.dataset.action) {
     case 'new':
+      if (currentView !== 'lighting') navigateView('lighting');
       openSurveyDialog();
       break;
     case 'project-details':
@@ -933,8 +1447,49 @@ surveyList.addEventListener('click', async (event) => {
   if (!button) return;
   if (sensorRunning) await stopSensor();
   const survey = state.surveys.find((item) => item.id === button.dataset.survey);
+  currentView = 'lighting';
+  history.pushState({ view: 'lighting' }, '');
   await commit({ ...state, activeId: button.dataset.survey, activeEntryId: survey?.entries[0]?.id || null });
 });
+
+document.querySelectorAll('.module-link').forEach((button) => {
+  button.addEventListener('click', () => navigateView(button.dataset.view));
+});
+document.querySelector('#home-button').addEventListener('click', () => navigateView('home'));
+document.querySelector('#back-button').addEventListener('click', () => {
+  if (currentView === 'check-detail') navigateView('check-project', { projectId: activeCheckProjectId });
+  else if (currentView === 'check-project') navigateView('checks');
+  else navigateView('home');
+});
+window.addEventListener('popstate', (event) => {
+  currentView = ['home', 'lighting', 'checks', 'check-project', 'check-detail'].includes(event.state?.view)
+    ? event.state.view
+    : 'home';
+  activeCheckProjectId = event.state?.projectId || activeCheckProjectId;
+  activeCheckId = event.state?.checkId || activeCheckId;
+  render();
+});
+
+document.querySelector('#check-import-form').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  try {
+    await importBuildingChecks(event.currentTarget);
+  } catch (error) {
+    alertError(error, 'Could not import the building check list.');
+  }
+});
+document.querySelector('#close-check-import').addEventListener('click', () => document.querySelector('#check-import-dialog').close());
+document.querySelector('#cancel-check-import').addEventListener('click', () => document.querySelector('#check-import-dialog').close());
+document.querySelector('#check-update-form').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  try {
+    await saveCheckUpdate(event.currentTarget);
+  } catch (error) {
+    alertError(error, 'Could not save the building check update.');
+  }
+});
+document.querySelector('#close-check-update').addEventListener('click', () => document.querySelector('#check-update-dialog').close());
+document.querySelector('#cancel-check-update').addEventListener('click', () => document.querySelector('#check-update-dialog').close());
 
 reportsDialog.addEventListener('click', async (event) => {
   const button = event.target.closest('[data-report-action]');
@@ -1172,6 +1727,7 @@ previewDialog.addEventListener('click', (event) => {
     : `Annotated photograph · ${formatDateTime(previewPhoto.createdAt)}${previewPhoto.readingLux === null ? '' : ` · ${formatLux(previewPhoto.readingLux)} lx recorded`}`;
 });
 
+history.replaceState({ view: 'home' }, '');
 stateReady = loadState().catch((error) => {
   stateLoadError = error;
   workspace.innerHTML = '<div class="empty-state"><h2>Survey storage is unavailable.</h2><p>Your stored project data was not changed. Check device storage permissions and reopen the app.</p></div>';

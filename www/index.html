@@ -15,11 +15,20 @@
         <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
         <span>FEENSTRA <strong>LIGHT SURVEYS</strong></span>
       </a>
+      <div class="topbar-actions">
+        <button class="button secondary" id="back-button" type="button" hidden>← Back</button>
+        <button class="button secondary" id="home-button" type="button">Home</button>
+      </div>
       <span class="offline-indicator"><span></span> LOCAL WORKSPACE</span>
     </header>
 
     <main class="layout">
       <aside class="rail">
+        <nav class="module-nav" aria-label="App sections">
+          <button type="button" class="module-link" data-view="home"><span>Home</span></button>
+          <button type="button" class="module-link" data-view="lighting"><span>Lighting surveys</span></button>
+          <button type="button" class="module-link" data-view="checks"><span>Building checks</span></button>
+        </nav>
         <div class="rail-heading">
           <div>
             <p class="eyebrow">FIELDWORK</p>
@@ -99,6 +108,54 @@
       </div>
       <iframe id="saved-report-frame" title="Saved OHS report preview" sandbox=""></iframe>
       <div class="dialog-actions"><button class="button secondary" type="button" id="close-report-preview-footer">Close</button></div>
+    </dialog>
+    <dialog id="check-import-dialog" class="survey-dialog">
+      <form id="check-import-form">
+        <div class="dialog-heading">
+          <div><p class="eyebrow">BUILDING CHECKS</p><h2>Import check list</h2></div>
+          <button class="icon-button quiet" type="button" id="close-check-import" aria-label="Close">×</button>
+        </div>
+        <label>Building Name<input name="buildingName" maxlength="100" required /></label>
+        <label>Inspector Name<input name="inspectorName" maxlength="100" required /></label>
+        <label>Check list file<input name="checksFile" type="file" accept=".csv,.xlsx" required /></label>
+        <p class="dialog-note">CSV and Excel (.xlsx) files are supported. Include a check/item/name column. Optional columns include location/area, description, category, reference/standard, condition, and severity.</p>
+        <div class="dialog-actions">
+          <button class="button secondary" type="button" id="cancel-check-import">Cancel</button>
+          <button class="button primary" type="submit">Import checks</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="check-update-dialog" class="survey-dialog">
+      <form id="check-update-form">
+        <div class="dialog-heading">
+          <div><p class="eyebrow">BUILDING CHECK UPDATE</p><h2 id="check-update-title">Update check</h2></div>
+          <button class="icon-button quiet" type="button" id="close-check-update" aria-label="Close">×</button>
+        </div>
+        <label>Status
+          <select name="status" required>
+            <option value="open">Open</option><option value="in-progress">In progress</option>
+            <option value="repaired">Repaired</option><option value="verified">Verified</option>
+          </select>
+        </label>
+        <label>Condition
+          <select name="condition" required>
+            <option value="not-assessed">Not assessed</option><option value="good">Good</option>
+            <option value="fair">Fair</option><option value="poor">Poor</option><option value="critical">Critical</option>
+          </select>
+        </label>
+        <label>Severity
+          <select name="severity" required>
+            <option value="not-assessed">Not assessed</option><option value="low">Low</option><option value="moderate">Moderate</option>
+            <option value="high">High</option><option value="critical">Critical</option>
+          </select>
+        </label>
+        <label>Update notes<textarea name="notes" maxlength="2000" rows="4" placeholder="Describe the condition, repair, or verification"></textarea></label>
+        <label>Attach photos<input name="photos" type="file" accept="image/*" capture="environment" multiple /></label>
+        <div class="dialog-actions">
+          <button class="button secondary" type="button" id="cancel-check-update">Cancel</button>
+          <button class="button primary" type="submit">Save update</button>
+        </div>
+      </form>
     </dialog>
     <input id="photo-input" type="file" accept="image/*" capture="environment" hidden />
   </body>

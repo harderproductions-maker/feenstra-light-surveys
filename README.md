@@ -18,6 +18,12 @@ To download it, open the repository's **Actions** tab, select the successful **B
 
 On Android, choose **Export PDF report** to open Android's print screen, where the report can be saved as a PDF or shared. In a browser, the print dialog can save the report as PDF.
 
+## Building checks and repairs
+
+From the **Home** dashboard, open **Building checks** and import a CSV or `.xlsx` checklist. Enter the building and inspector names; the spreadsheet must include a **Check**, **Item**, **Name**, or **Inspection Item** column. Optional columns include **Location/Area**, **Description**, **Category**, **Reference/Standard**, **Condition**, and **Severity**. A CSV sample template is available on the building-check screen.
+
+Each imported row becomes its own building check and individual PDF report. Open a check to record its condition (not assessed, good, fair, poor, or critical), severity (not assessed, low, moderate, high, critical), photos, and notes. Missing spreadsheet values stay **not assessed**; they are not assumed to be low risk or good condition. Use **Update check** to log repair progress, attach up to 10 photos (12 MB each), and preserve a timestamped history. Mark a check **Repaired** with a repair note before moving it to **Verified**. All records stay attached to their building and check on this device.
+
 ## Local web preview
 
 Install Node.js 20, then run:
