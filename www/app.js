@@ -41,10 +41,16 @@ function openDatabase() {
   });
 }
 
-function databaseRequest(mode, action) {
+const databaseReady = openDatabase().then((connection) => {
+  database = connection;
+  return connection;
+});
+
+async function databaseRequest(mode, action) {
+  await databaseReady;
   return new Promise((resolve, reject) => {
     if (!database) {
-      reject(new Error('Local survey storage has not finished initializing.'));
+      reject(new Error('The local survey database connection is unavailable.'));
       return;
     }
     const transaction = database.transaction('workspace', mode);
@@ -135,7 +141,7 @@ function normalizePhoto(photo) {
 }
 
 async function loadState() {
-  database = await openDatabase();
+  await databaseReady;
   const saved = await databaseRequest('readonly', (store) => store.get('state'));
   if (saved) {
     if (!Array.isArray(saved.surveys)) {
