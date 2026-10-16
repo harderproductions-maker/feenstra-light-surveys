@@ -33,6 +33,19 @@ def patch_manifest(manifest_path):
         )
         manifest.insert(0, camera_permission)
 
+    camera_feature = next(
+        (
+            element
+            for element in manifest.findall("uses-feature")
+            if element.get(android_attribute("name")) == "android.hardware.camera.any"
+        ),
+        None,
+    )
+    if camera_feature is None:
+        camera_feature = ET.SubElement(manifest, "uses-feature")
+    camera_feature.set(android_attribute("name"), "android.hardware.camera.any")
+    camera_feature.set(android_attribute("required"), "false")
+
     app = manifest.find("application")
     if app is None:
         raise RuntimeError(f"No <application> element found in {manifest_path}")
@@ -82,6 +95,20 @@ def patch_manifest(manifest_path):
             },
         )
 
+    camera_activity = next(
+        (
+            element
+            for element in app.findall("activity")
+            if element.get(android_attribute("name")) == ".CameraCaptureActivity"
+        ),
+        None,
+    )
+    if camera_activity is None:
+        camera_activity = ET.SubElement(app, "activity")
+    camera_activity.set(android_attribute("name"), ".CameraCaptureActivity")
+    camera_activity.set(android_attribute("exported"), "false")
+    camera_activity.set(android_attribute("screenOrientation"), "portrait")
+
     ET.indent(tree, space="    ")
     tree.write(manifest_path, encoding="utf-8", xml_declaration=True)
 
@@ -90,13 +117,32 @@ def main():
     java_source = ROOT / "android-src"
     java_destination = ROOT / "android/app/src/main/java/com/feenstra/lightsurveys"
     java_destination.mkdir(parents=True, exist_ok=True)
-    for filename in ("LightSensorPlugin.java", "MainActivity.java"):
+    for filename in (
+        "LightSensorPlugin.java",
+        "CameraCapturePlugin.java",
+        "CameraCaptureActivity.java",
+        "MainActivity.java",
+    ):
         shutil.copy2(java_source / filename, java_destination / filename)
 
     manifest_path = ROOT / "android/app/src/main/AndroidManifest.xml"
     if not manifest_path.is_file():
         raise FileNotFoundError(f"Android manifest not found: {manifest_path}")
     patch_manifest(manifest_path)
+
+    app_gradle = ROOT / "android/app/build.gradle"
+    gradle_text = app_gradle.read_text(encoding="utf-8")
+    camera_dependencies = (
+        "    implementation 'androidx.camera:camera-camera2:1.3.4'\n"
+        "    implementation 'androidx.camera:camera-lifecycle:1.3.4'\n"
+        "    implementation 'androidx.camera:camera-view:1.3.4'\n"
+    )
+    if "androidx.camera:camera-camera2" not in gradle_text:
+        marker = "dependencies {\n"
+        if marker not in gradle_text:
+            raise RuntimeError(f"No dependencies block found in {app_gradle}")
+        gradle_text = gradle_text.replace(marker, marker + camera_dependencies, 1)
+        app_gradle.write_text(gradle_text, encoding="utf-8")
 
 
 if __name__ == "__main__":

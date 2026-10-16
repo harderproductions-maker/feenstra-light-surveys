@@ -80,6 +80,22 @@
         <button class="button secondary" type="button" data-preview-mode="annotated">View annotated</button>
       </div>
     </dialog>
+    <dialog id="reports-dialog" class="survey-dialog reports-dialog">
+      <div class="dialog-heading">
+        <div><p class="eyebrow">PROJECT ARCHIVE</p><h2>Saved report revisions</h2></div>
+        <button class="icon-button quiet" type="button" id="close-reports-dialog" aria-label="Close">×</button>
+      </div>
+      <p class="dialog-note">Each saved report preserves the project data at export time. Restore a revision as a separate editable project; this does not overwrite the current project.</p>
+      <div id="report-history-list" class="report-history-list"></div>
+    </dialog>
+    <dialog id="report-preview-dialog" class="report-preview-dialog">
+      <div class="dialog-heading">
+        <h2 id="saved-report-title">Saved report</h2>
+        <button class="icon-button quiet" type="button" id="close-report-preview" aria-label="Close">×</button>
+      </div>
+      <iframe id="saved-report-frame" title="Saved OHS report preview" sandbox="allow-scripts"></iframe>
+      <div class="dialog-actions"><button class="button secondary" type="button" id="close-report-preview-footer">Close</button></div>
+    </dialog>
     <input id="photo-input" type="file" accept="image/*" capture="environment" hidden />
   </body>
 </html>

@@ -2,9 +2,11 @@
 
 Offline-first Android lighting survey app built with Capacitor 6. Each project requires a building name and inspector name and contains separately named inspection entries. Readings, notes, and photos are kept with their entry in on-device storage.
 
-On Android, **Start sensor** reads the phone's ambient light sensor and displays actual illuminance in lux (lx). Choose **Use live reading** to save that exact sensor reading with an inspection entry. If a device has no light sensor, the app reports that the sensor is unavailable; manually entered measurements are clearly identified as manual and are never presented as sensor readings. Target lux is assessor-entered; the app does not assume a jurisdiction-specific standard.
+On Android, **Start sensor** reads the phone's ambient light sensor and displays illuminance in lux (lx). The app initially applies the comparison factor 1200 / 82.01 requested for this phone. This is an **unverified adjustment, not certified calibration**: raw sensor values and the applied factor are retained with each reading. Use **Calibrate** with a trusted reference meter to update the adjustment. Choose **Use live reading** to save the current adjusted value, raw value, and factor with the selected entry. If a device has no light sensor, the app reports that the sensor is unavailable; it never fabricates readings. Manually entered measurements are clearly identified as manual.
 
-Photos are captured using the device camera or selected from the device. Before capture, select a saved phone-sensor reading from the current entry to include that exact recorded lux value, entry, building, and capture time on the annotated image. Manually entered values are never used as sensor overlays. The original photograph is retained, and both versions are available in the project report. Reports include every named entry, saved reading, observation, and photo for that project.
+The recommended lux target defaults to **300 lx**. Each entry can keep its own measurements, notes, and photos. On Android, **Take inspection photo** opens the native camera preview, displays the live phone lux reading, and captures the photograph. When the sensor is available, that photo is saved with the exact raw and adjusted reading captured alongside it. The app creates an annotated copy showing the building, entry, capture time, recommended target, and recorded lux; it retains the original image as well. Without a light sensor, the photo is still saved without inventing a measurement. Photos and readings remain attached to their project and named entry.
+
+Exported reports contain every entry, measurement, observation, and photo in the project. **Saved reports** keeps report revisions in the app, where they can be viewed or exported later. Choose **Restore as editable copy** to reopen that revision's project data for further editing without overwriting the original project or saved report.
 
 Project records and photos are stored in the app's local IndexedDB database. Keep a copy of each exported report; local records are not synchronized to a server.
 
@@ -14,7 +16,7 @@ The GitHub Actions workflow runs on pushes to `main` and can also be started man
 
 To download it, open the repository's **Actions** tab, select the successful **Build Android Debug APK** run, scroll to **Artifacts**, and click **Feenstra-Light-Surveys-APK**. Download and unzip the artifact to get `app-debug.apk`.
 
-On Android, choose **Export OHS report** to save the complete HTML report in Documents and open the Android share sheet to download or share it. In a browser, the report downloads directly as an HTML file; it can also be printed or saved as PDF.
+On Android, choose **Save & export report** to save the complete HTML report in Documents and open the Android share sheet to download or share it. In a browser, the report downloads directly as an HTML file; it can also be printed or saved as PDF.
 
 ## Local web preview
 

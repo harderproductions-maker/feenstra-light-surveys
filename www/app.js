@@ -3,8 +3,16 @@ import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 
 const LightSensor = registerPlugin('LightSensor');
+const CameraCapture = registerPlugin('CameraCapture');
 const storageKey = 'feenstra-light-surveys-v1';
 const databaseName = 'feenstra-light-surveys';
+const recommendedLux = 300;
+const initialCalibration = {
+  factor: 1200 / 82.01,
+  rawReference: 82.01,
+  luxReference: 1200,
+  note: 'Unverified comparison supplied by the inspector'
+};
 const workspace = document.querySelector('#workspace');
 const surveyList = document.querySelector('#survey-list');
 const surveyDialog = document.querySelector('#survey-dialog');
@@ -13,12 +21,15 @@ const photoDialog = document.querySelector('#photo-dialog');
 const photoForm = document.querySelector('#photo-form');
 const photoInput = document.querySelector('#photo-input');
 const previewDialog = document.querySelector('#photo-preview');
+const reportsDialog = document.querySelector('#reports-dialog');
+const reportPreviewDialog = document.querySelector('#report-preview-dialog');
 
 let database;
 let stateReady;
 let stateLoadError = null;
-let state = { surveys: [], activeId: null, activeEntryId: null };
+let state = { surveys: [], activeId: null, activeEntryId: null, sensorCalibration: initialCalibration };
 let liveLux = null;
+let liveCalibratedLux = null;
 let liveLuxAt = null;
 let sensorListener = null;
 let sensorRunning = false;
@@ -75,6 +86,7 @@ function normalizeSurvey(survey) {
     inspectorName: String(survey.inspectorName ?? ''),
     inspectionDate: String(survey.inspectionDate ?? survey.date ?? ''),
     createdAt: survey.createdAt || new Date().toISOString(),
+    reports: Array.isArray(survey.reports) ? survey.reports : [],
     entries: []
   };
 
@@ -114,11 +126,27 @@ function normalizeSurvey(survey) {
   return normalized;
 }
 
+function normalizeCalibration(calibration) {
+  if (!calibration || !Number.isFinite(Number(calibration.factor)) || Number(calibration.factor) <= 0) {
+    return initialCalibration;
+  }
+  return {
+    factor: Number(calibration.factor),
+    rawReference: Number(calibration.rawReference) || initialCalibration.rawReference,
+    luxReference: Number(calibration.luxReference) || initialCalibration.luxReference,
+    note: String(calibration.note || initialCalibration.note)
+  };
+}
+
 function normalizeReading(reading) {
   return {
     ...reading,
     id: reading.id || crypto.randomUUID(),
     lux: Number(reading.lux),
+    rawLux: reading.rawLux === null || reading.rawLux === undefined ? null : Number(reading.rawLux),
+    calibrationFactor: reading.calibrationFactor === null || reading.calibrationFactor === undefined
+      ? null
+      : Number(reading.calibrationFactor),
     target: reading.target === null || reading.target === undefined || reading.target === ''
       ? null
       : Number(reading.target),
@@ -136,6 +164,8 @@ function normalizePhoto(photo) {
     readingId: photo.readingId || null,
     readingLux: photo.readingLux === null || photo.readingLux === undefined ? null : Number(photo.readingLux),
     readingSource: photo.readingSource || null,
+    readingRawLux: photo.readingRawLux === null || photo.readingRawLux === undefined ? null : Number(photo.readingRawLux),
+    calibrationFactor: photo.calibrationFactor === null || photo.calibrationFactor === undefined ? null : Number(photo.calibrationFactor),
     createdAt: photo.createdAt || new Date().toISOString()
   };
 }
@@ -150,7 +180,8 @@ async function loadState() {
     state = {
       surveys: saved.surveys.map(normalizeSurvey),
       activeId: saved.activeId || null,
-      activeEntryId: saved.activeEntryId || null
+      activeEntryId: saved.activeEntryId || null,
+      sensorCalibration: normalizeCalibration(saved.sensorCalibration)
     };
     render();
     return;
@@ -165,11 +196,13 @@ async function loadState() {
     state = {
       surveys: legacy.surveys.map(normalizeSurvey),
       activeId: legacy.activeId || null,
-      activeEntryId: null
+      activeEntryId: null,
+      sensorCalibration: initialCalibration
     };
     await databaseRequest('readwrite', (store) => store.put(state, 'state'));
     localStorage.removeItem(storageKey);
   }
+
   render();
 }
 
@@ -250,10 +283,9 @@ function render() {
 
   const entry = activeEntry();
   const totalReadings = survey.entries.reduce((count, item) => count + item.readings.length, 0);
-  const readingOptions = entry?.readings.map((reading) => `
-    <option value="${escapeHtml(reading.id)}">${escapeHtml(formatLux(reading.lux))} lx · ${escapeHtml(formatDateTime(reading.createdAt))}</option>`).join('') || '';
   const readings = entry ? [...entry.readings].reverse() : [];
   const photos = entry ? [...entry.photos].reverse() : [];
+  const calibration = normalizeCalibration(state.sensorCalibration);
 
   workspace.innerHTML = `
     <div class="survey-view">
@@ -262,11 +294,13 @@ function render() {
           <p class="eyebrow">OHS LIGHTING PROJECT / ${escapeHtml(formatDate(survey.inspectionDate).toUpperCase())}</p>
           <h2>${escapeHtml(survey.buildingName || 'Building name required')}</h2>
           <p class="survey-meta">Inspector: ${escapeHtml(survey.inspectorName || 'Required')} · Inspection date: ${escapeHtml(formatDate(survey.inspectionDate))} · ${totalReadings} readings</p>
+          ${survey.restoredFromReportId ? '<p class="survey-meta restored-note">Editable copy restored from a saved report; original project and report are preserved.</p>' : ''}
         </div>
         <div class="top-actions">
           <button class="button secondary" type="button" data-action="project-details">Project details</button>
+          <button class="button secondary" type="button" data-action="reports">Saved reports (${survey.reports.length})</button>
           <button class="button secondary" type="button" data-action="photo" ${entry ? '' : 'disabled'}>Add photo</button>
-          <button class="button dark" type="button" data-action="export">Export OHS report <span aria-hidden="true">↗</span></button>
+          <button class="button dark" type="button" data-action="export">Save & export report <span aria-hidden="true">↗</span></button>
         </div>
       </div>
 
@@ -294,18 +328,20 @@ function render() {
       <div class="capture-grid">
         <section class="meter-panel" aria-label="Live light sensor">
           <div class="meter-kicker"><span>AMBIENT ILLUMINANCE</span><span class="sensor-state ${sensorRunning ? 'live' : ''}" id="sensor-state">${sensorRunning ? 'Live sensor' : 'Sensor off'}</span></div>
-          <div class="lux-display"><strong id="lux-value">${liveLux === null ? '--' : escapeHtml(formatLux(liveLux))}</strong><span>lx</span></div>
-          <p class="sensor-caption" id="sensor-caption">${liveLux === null ? 'No live reading. Start the phone sensor to measure illuminance.' : `Actual phone sensor reading · ${escapeHtml(formatDateTime(liveLuxAt))}`}</p>
+          <div class="lux-display"><strong id="lux-value">${liveLux === null ? '--' : escapeHtml(formatLux(liveCalibratedLux))}</strong><span>lx</span></div>
+          <p class="sensor-caption" id="sensor-caption">${liveLux === null ? 'No live reading. Start the phone sensor to measure illuminance.' : `Raw ${escapeHtml(formatLux(liveLux))} lx · adjusted ×${escapeHtml(calibration.factor.toFixed(2))} · ${escapeHtml(formatDateTime(liveLuxAt))}`}</p>
           <div class="meter-actions">
             <button class="button primary" type="button" data-action="sensor">${sensorRunning ? 'Stop sensor' : 'Start sensor'}</button>
             <button class="button secondary" type="button" data-action="use-live" ${liveLux === null || !entry ? 'disabled' : ''}>Use live reading</button>
+            <button class="button secondary" type="button" data-action="calibration">Calibrate ×${escapeHtml(calibration.factor.toFixed(2))}</button>
           </div>
+          <p class="calibration-note">Adjusted using your 82.01 → 1200 lx app comparison. This is unverified, not certified instrument calibration.</p>
         </section>
         <section class="entry-panel">
           <h3>Record a measurement</h3>
           <p>${entry ? `Reading will be saved to ${escapeHtml(entry.name)}.` : 'Add an inspection entry before recording a measurement.'}</p>
           <form class="measurement-form" id="measurement-form">
-            <div class="field"><label for="target">Target lux <span>(optional)</span></label><input id="target" name="target" type="number" min="0" step="any" inputmode="decimal" placeholder="Set by assessor" /></div>
+            <div class="field"><label for="target">Recommended target lux</label><input id="target" name="target" type="number" min="0" step="any" inputmode="decimal" value="${recommendedLux}" required /></div>
             <div class="field"><label for="manual-lux">Measured lux</label><input id="manual-lux" name="lux" type="number" min="0" step="any" inputmode="decimal" placeholder="Enter measured value" required /></div>
             <p class="reading-source" id="reading-source">Manual entry (not a phone sensor reading)</p>
             <div class="field full-width"><label for="reading-note">Measurement note <span>(optional)</span></label><input id="reading-note" name="note" maxlength="500" placeholder="Conditions or task" /></div>
@@ -342,7 +378,7 @@ function readingRow(reading) {
   const status = target === null ? 'No target' : reading.lux >= target ? 'Meets target' : 'Below target';
   const statusClass = target === null ? 'unset' : reading.lux >= target ? '' : 'below';
   return `<div class="reading-row">
-    <span><strong class="reading-lux">${escapeHtml(formatLux(reading.lux))} lx</strong><small>${reading.source === 'sensor' ? 'Phone light sensor' : 'Manual entry'}</small></span>
+    <span><strong class="reading-lux">${escapeHtml(formatLux(reading.lux))} lx</strong><small>${reading.source === 'sensor' ? `Phone sensor · raw ${reading.rawLux === null ? 'not recorded' : `${escapeHtml(formatLux(reading.rawLux))} lx · ×${escapeHtml(Number(reading.calibrationFactor || 1).toFixed(2))}`}` : 'Manual entry'}</small></span>
     <span class="reading-target">${target === null ? '—' : `${escapeHtml(formatLux(target))} lx`}</span>
     <span class="reading-status ${statusClass}">${status}</span>
     <span class="reading-time">${escapeHtml(formatDateTime(reading.createdAt))}</span>
@@ -381,18 +417,20 @@ function selectEntry(event) {
 
 async function startSensor() {
   liveLux = null;
+  liveCalibratedLux = null;
   liveLuxAt = null;
   try {
     sensorListener = await LightSensor.addListener('reading', ({ lux }) => {
       const value = Number(lux);
       if (!Number.isFinite(value) || value < 0) return;
       liveLux = value;
+      liveCalibratedLux = value * normalizeCalibration(state.sensorCalibration).factor;
       liveLuxAt = new Date().toISOString();
       const display = document.querySelector('#lux-value');
       const caption = document.querySelector('#sensor-caption');
       const useButton = document.querySelector('[data-action="use-live"]');
-      if (display) display.textContent = formatLux(liveLux);
-      if (caption) caption.textContent = `Actual phone sensor reading · ${formatDateTime(liveLuxAt)}`;
+      if (display) display.textContent = formatLux(liveCalibratedLux);
+      if (caption) caption.textContent = `Raw ${formatLux(liveLux)} lx · adjusted ×${normalizeCalibration(state.sensorCalibration).factor.toFixed(2)} · ${formatDateTime(liveLuxAt)}`;
       if (useButton) useButton.disabled = !activeEntry();
     });
     await LightSensor.start();
@@ -403,6 +441,7 @@ async function startSensor() {
     sensorListener = null;
     sensorRunning = false;
     liveLux = null;
+    liveCalibratedLux = null;
     liveLuxAt = null;
     render();
     alertError(error, 'The ambient light sensor is unavailable. No sensor reading was recorded.');
@@ -416,6 +455,7 @@ async function stopSensor() {
     sensorListener = null;
     sensorRunning = false;
     liveLux = null;
+    liveCalibratedLux = null;
     liveLuxAt = null;
     render();
   } catch (error) {
@@ -436,6 +476,83 @@ function openPhotoDialog() {
     <option value="${escapeHtml(reading.id)}">${escapeHtml(formatLux(reading.lux))} lx · ${escapeHtml(formatDateTime(reading.createdAt))} · ${reading.source === 'sensor' ? 'Phone sensor' : 'manual'}</option>`).join('')}`;
   photoForm.elements.annotate.checked = sensorReadings.length > 0;
   photoDialog.showModal();
+}
+
+async function savePhotoForEntry(surveyId, entryId, originalData, capture) {
+  const survey = state.surveys.find((item) => item.id === surveyId);
+  const entry = survey?.entries.find((item) => item.id === entryId);
+  if (!survey || !entry) throw new Error('The selected project entry is no longer available.');
+
+  const createdAt = capture.createdAt || new Date().toISOString();
+  let reading = capture.reading || null;
+  if (!reading && Number.isFinite(capture.rawLux) && capture.rawLux >= 0
+    && Number.isFinite(capture.calibratedLux) && capture.calibratedLux >= 0) {
+    reading = {
+      id: crypto.randomUUID(),
+      lux: capture.calibratedLux,
+      rawLux: capture.rawLux,
+      calibrationFactor: capture.calibrationFactor,
+      target: recommendedLux,
+      note: 'Captured with inspection photo',
+      source: 'sensor',
+      createdAt
+    };
+  }
+
+  const photo = {
+    id: crypto.randomUUID(),
+    entryName: entry.name,
+    originalData,
+    annotatedData: capture.annotate === false
+      ? null
+      : await createAnnotatedPhoto(originalData, survey, entry, reading, createdAt),
+    readingId: reading?.id || null,
+    readingLux: reading ? Number(reading.lux) : null,
+    readingRawLux: reading?.rawLux ?? null,
+    calibrationFactor: reading?.calibrationFactor ?? null,
+    readingSource: reading?.source || null,
+    createdAt
+  };
+  const surveys = state.surveys.map((item) => item.id === survey.id
+    ? { ...item, entries: item.entries.map((child) => child.id === entry.id
+      ? {
+        ...child,
+        readings: reading ? [...child.readings, reading] : child.readings,
+        photos: [...child.photos, photo]
+      }
+      : child) }
+    : item);
+  return commit({ ...state, surveys });
+}
+
+async function captureNativePhoto() {
+  const survey = activeSurvey();
+  const entry = activeEntry();
+  if (!survey || !entry) {
+    window.alert('Add or select a named inspection entry before taking a photo.');
+    return;
+  }
+  try {
+    if (sensorRunning) await stopSensor();
+    const result = await CameraCapture.capture({
+      buildingName: survey.buildingName,
+      entryName: entry.name,
+      recommendedLux,
+      calibrationFactor: normalizeCalibration(state.sensorCalibration).factor
+    });
+    if (result.cancelled) return;
+    if (!result.base64) throw new Error('The camera did not return an image.');
+    const createdAt = new Date(Number(result.capturedAt) || Date.now()).toISOString();
+    const saved = await savePhotoForEntry(survey.id, entry.id, `data:image/jpeg;base64,${result.base64}`, {
+      rawLux: Number.isFinite(result.rawLux) ? result.rawLux : null,
+      calibratedLux: Number.isFinite(result.calibratedLux) ? result.calibratedLux : null,
+      calibrationFactor: normalizeCalibration(state.sensorCalibration).factor,
+      createdAt
+    });
+    if (saved) window.alert('Photo saved with this inspection entry and its captured sensor reading.');
+  } catch (error) {
+    alertError(error, 'Could not open the camera or save the captured photo.');
+  }
 }
 
 function fileToDataUrl(file) {
@@ -466,10 +583,14 @@ async function createAnnotatedPhoto(originalData, survey, entry, reading, create
       `FEENSTRA LIGHT SURVEYS  |  ${survey.buildingName}`,
       `Entry: ${entry.name}`,
       `Captured: ${formatDateTime(createdAt)}`,
+      `Recommended target: ${recommendedLux} lx`,
       reading
         ? `Lux: ${formatLux(reading.lux)} lx  (${reading.source === 'sensor' ? 'phone light sensor' : 'manual entry'}) · Measured ${formatDateTime(reading.createdAt)}`
         : 'Lux: not recorded for this photo'
     ];
+    if (reading?.source === 'sensor' && Number.isFinite(reading.rawLux)) {
+      lines.push(`Raw sensor: ${formatLux(reading.rawLux)} lx · adjustment ×${Number(reading.calibrationFactor).toFixed(2)} (unverified)`);
+    }
     const panelHeight = padding * 2 + lines.length * lineHeight;
     const panelTop = canvas.height - panelHeight;
     context.fillStyle = 'rgba(13, 26, 23, 0.86)';
@@ -504,7 +625,7 @@ function buildReport(survey) {
         : Number.isFinite(Number(reading.target)) ? Number(reading.target) : null;
       const assessment = target === null ? 'No target specified' : reading.lux >= target ? 'Meets target' : 'Below target';
       return `<tr>
-        <td>${escapeHtml(formatLux(reading.lux))} lx<br><small>${reading.source === 'sensor' ? 'Phone light sensor' : 'Manual entry'}</small></td>
+        <td>${escapeHtml(formatLux(reading.lux))} lx<br><small>${reading.source === 'sensor' ? `Phone sensor · raw ${reading.rawLux === null ? 'not recorded' : `${escapeHtml(formatLux(reading.rawLux))} lx · calibration ×${escapeHtml(Number(reading.calibrationFactor || 1).toFixed(2))}`}` : 'Manual entry'}</small></td>
         <td>${target === null ? '—' : `${escapeHtml(formatLux(target))} lx`}</td>
         <td>${assessment}</td>
         <td>${escapeHtml(formatDateTime(reading.createdAt))}</td>
@@ -536,7 +657,7 @@ function buildReport(survey) {
     <div><strong>${allReadings.length}</strong><span>Recorded measurements</span></div><div><strong>${allPhotos.length}</strong><span>Inspection photos</span></div>
     <div><strong>${average}</strong><span>Average measured lux</span></div></section>
     <h2>Inspection entries and measurements</h2>${entries || '<p>No inspection entries recorded.</p>'}
-    <p class="disclaimer">Targets are entered by the assessor and are not pre-populated. Sensor readings are captured from the device ambient light sensor; manual values are identified separately. This record reports observed readings and user-entered targets; confirm applicable workplace lighting requirements for the relevant jurisdiction and task.</p></body></html>`;
+    <p class="disclaimer">Recommended target: ${recommendedLux} lx; confirm the applicable standard for the task and jurisdiction. Sensor readings retain the raw phone value and the adjusted value. The current adjustment factor (${escapeHtml(normalizeCalibration(state.sensorCalibration).factor.toFixed(4))}) is based on an unverified comparison supplied in the app and is not certified calibration. Manual values are identified separately. Confirm workplace lighting requirements for the relevant jurisdiction and task.</p></body></html>`;
 }
 
 function safeFileName(value) {
@@ -552,38 +673,84 @@ function encodeBase64(value) {
   return btoa(binary);
 }
 
+async function downloadReport(report, survey, reportId) {
+  const filename = `OHS-Lighting-Report-${safeFileName(survey.buildingName)}-${reportId.slice(0, 8)}.html`;
+  if (Capacitor.isNativePlatform()) {
+    const saved = await Filesystem.writeFile({
+      path: filename,
+      data: encodeBase64(report),
+      directory: Directory.Documents,
+      recursive: true
+    });
+    await Share.share({
+      title: 'OHS Lighting Survey Report',
+      text: `Lighting survey report for ${survey.buildingName}`,
+      url: saved.uri,
+      dialogTitle: 'Export OHS lighting report'
+    });
+    return;
+  }
+  const url = URL.createObjectURL(new Blob([report], { type: 'text/html;charset=utf-8' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
+
 async function exportReport(survey) {
   if (!survey.buildingName.trim() || !survey.inspectorName.trim() || !survey.inspectionDate) {
     window.alert('Building Name, Inspector Name, and inspection date are required before exporting this report.');
     openSurveyDialog(survey);
     return;
   }
-  const report = buildReport(survey);
-  const filename = `OHS-Lighting-Report-${safeFileName(survey.buildingName)}.html`;
   try {
-    if (Capacitor.isNativePlatform()) {
-      const saved = await Filesystem.writeFile({
-        path: filename,
-        data: encodeBase64(report),
-        directory: Directory.Documents,
-        recursive: true
-      });
-      await Share.share({
-        title: 'OHS Lighting Survey Report',
-        text: `Lighting survey report for ${survey.buildingName}`,
-        url: saved.uri,
-        dialogTitle: 'Export OHS lighting report'
-      });
-      return;
-    }
-    const url = URL.createObjectURL(new Blob([report], { type: 'text/html;charset=utf-8' }));
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    link.click();
-    window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    const report = buildReport(survey);
+    const reportId = crypto.randomUUID();
+    const snapshot = JSON.parse(JSON.stringify({ ...survey, reports: [] }));
+    const savedSurvey = {
+      ...survey,
+      reports: [...survey.reports, { id: reportId, createdAt: new Date().toISOString(), html: report, projectSnapshot: snapshot }]
+    };
+    const surveys = state.surveys.map((item) => item.id === survey.id ? savedSurvey : item);
+    if (!await commit({ ...state, surveys })) return;
+    await downloadReport(report, survey, reportId);
   } catch (error) {
     alertError(error, 'Could not export the OHS report.');
+  }
+}
+
+function openReportHistory(survey) {
+  const list = document.querySelector('#report-history-list');
+  list.innerHTML = survey.reports.length
+    ? [...survey.reports].reverse().map((report) => `
+      <article class="saved-report">
+        <div><strong>Report · ${escapeHtml(formatDateTime(report.createdAt))}</strong><span>${escapeHtml(report.id.slice(0, 8))}</span></div>
+        <button class="button secondary" type="button" data-report-action="view" data-report-id="${escapeHtml(report.id)}">View</button>
+        <button class="button secondary" type="button" data-report-action="download" data-report-id="${escapeHtml(report.id)}">Export</button>
+        <button class="button primary" type="button" data-report-action="restore" data-report-id="${escapeHtml(report.id)}">Restore as editable copy</button>
+      </article>`).join('')
+    : '<p class="empty-list">No saved reports yet. Use Save &amp; export report to preserve a report revision in this project.</p>';
+  reportsDialog.showModal();
+}
+
+async function restoreReportAsProject(survey, report) {
+  if (!report.projectSnapshot || !Array.isArray(report.projectSnapshot.entries)) {
+    window.alert('This saved report has no editable project snapshot.');
+    return;
+  }
+  const restored = {
+    ...JSON.parse(JSON.stringify(report.projectSnapshot)),
+    id: crypto.randomUUID(),
+    createdAt: new Date().toISOString(),
+    reports: [],
+    restoredFromReportId: report.id
+  };
+  const surveys = [restored, ...state.surveys];
+  const saved = await commit({ ...state, surveys, activeId: restored.id, activeEntryId: restored.entries[0]?.id || null });
+  if (saved) {
+    reportsDialog.close();
+    window.alert(`An editable copy of the ${survey.buildingName} report was restored. The saved report and original project were not changed.`);
   }
 }
 
@@ -613,10 +780,14 @@ workspace.addEventListener('click', async (event) => {
       if (survey) openSurveyDialog(survey);
       break;
     case 'photo':
-      openPhotoDialog();
+      if (Capacitor.isNativePlatform()) await captureNativePhoto();
+      else openPhotoDialog();
       break;
     case 'export':
       if (survey) await exportReport(survey);
+      break;
+    case 'reports':
+      if (survey) openReportHistory(survey);
       break;
     case 'sensor':
       if (sensorRunning) await stopSensor();
@@ -624,12 +795,38 @@ workspace.addEventListener('click', async (event) => {
       break;
     case 'use-live': {
       const input = document.querySelector('#manual-lux');
-      if (input && liveLux !== null && liveLuxAt) {
-        input.value = String(liveLux);
+      if (input && liveLux !== null && liveCalibratedLux !== null && liveLuxAt) {
+        input.value = String(liveCalibratedLux);
         input.dataset.source = 'sensor';
-        input.dataset.sensorLux = String(liveLux);
+        input.dataset.sensorLux = String(liveCalibratedLux);
+        input.dataset.rawLux = String(liveLux);
+        input.dataset.calibrationFactor = String(normalizeCalibration(state.sensorCalibration).factor);
         input.dataset.sensorTime = liveLuxAt;
-        document.querySelector('#reading-source').textContent = `Phone light sensor · ${formatDateTime(liveLuxAt)}`;
+        document.querySelector('#reading-source').textContent = `Adjusted phone sensor ×${normalizeCalibration(state.sensorCalibration).factor.toFixed(2)} · raw ${formatLux(liveLux)} lx`;
+      }
+      break;
+    }
+    case 'calibration': {
+      if (liveLux === null || liveLux <= 0) {
+        window.alert('Start the sensor and wait for a non-zero live reading before calibrating.');
+        break;
+      }
+      const reference = Number(window.prompt('Enter a trusted reference meter reading in lux for the same light and position. This adjustment is unverified and not certified calibration.', String(initialCalibration.luxReference)));
+      if (!Number.isFinite(reference) || reference <= 0) break;
+      const calibration = {
+        factor: reference / liveLux,
+        rawReference: liveLux,
+        luxReference: reference,
+        note: 'Inspector-calibrated from a reference meter; not independently certified'
+      };
+      if (await commit({ ...state, sensorCalibration: calibration })) {
+        liveCalibratedLux = liveLux * calibration.factor;
+        const input = document.querySelector('#manual-lux');
+        if (input?.dataset.source === 'sensor') {
+          input.value = String(liveCalibratedLux);
+          input.dataset.sensorLux = String(liveCalibratedLux);
+          input.dataset.calibrationFactor = String(calibration.factor);
+        }
       }
       break;
     }
@@ -644,12 +841,37 @@ surveyList.addEventListener('click', async (event) => {
   await commit({ ...state, activeId: button.dataset.survey, activeEntryId: survey?.entries[0]?.id || null });
 });
 
+reportsDialog.addEventListener('click', async (event) => {
+  const button = event.target.closest('[data-report-action]');
+  if (!button) return;
+  const survey = activeSurvey();
+  const report = survey?.reports.find((item) => item.id === button.dataset.reportId);
+  if (!survey || !report) return;
+
+  if (button.dataset.reportAction === 'view') {
+    document.querySelector('#saved-report-frame').srcdoc = report.html;
+    document.querySelector('#saved-report-title').textContent = `Saved report · ${formatDateTime(report.createdAt)}`;
+    reportPreviewDialog.showModal();
+  } else if (button.dataset.reportAction === 'download') {
+    try {
+      await downloadReport(report.html, survey, report.id);
+    } catch (error) {
+      alertError(error, 'Could not export the saved report.');
+    }
+  } else if (button.dataset.reportAction === 'restore') {
+    await restoreReportAsProject(survey, report);
+  }
+});
+
 document.querySelector('#new-survey').addEventListener('click', () => openSurveyDialog());
 document.querySelector('#close-dialog').addEventListener('click', () => surveyDialog.close());
 document.querySelector('#cancel-survey').addEventListener('click', () => surveyDialog.close());
 document.querySelector('#close-photo-dialog').addEventListener('click', () => photoDialog.close());
 document.querySelector('#cancel-photo').addEventListener('click', () => photoDialog.close());
 document.querySelector('#close-photo-preview').addEventListener('click', () => previewDialog.close());
+document.querySelector('#close-reports-dialog').addEventListener('click', () => reportsDialog.close());
+document.querySelector('#close-report-preview').addEventListener('click', () => reportPreviewDialog.close());
+document.querySelector('#close-report-preview-footer').addEventListener('click', () => reportPreviewDialog.close());
 
 surveyForm.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -759,6 +981,8 @@ workspace.addEventListener('submit', async (event) => {
     target,
     note: String(form.get('note') || '').trim(),
     source: fromSensor ? 'sensor' : 'manual',
+    rawLux: fromSensor ? Number(luxInput.dataset.rawLux) : null,
+    calibrationFactor: fromSensor ? Number(luxInput.dataset.calibrationFactor) : null,
     createdAt: fromSensor ? luxInput.dataset.sensorTime : new Date().toISOString()
   };
   const surveys = state.surveys.map((item) => item.id === survey.id
@@ -800,10 +1024,9 @@ photoForm.addEventListener('submit', (event) => {
 });
 
 photoInput.addEventListener('change', async () => {
-  const survey = state.surveys.find((item) => item.id === pendingPhoto?.surveyId);
-  const entry = survey?.entries.find((item) => item.id === pendingPhoto?.entryId);
+  const selection = pendingPhoto;
   const file = photoInput.files?.[0];
-  if (!survey || !entry || !file) {
+  if (!selection || !file) {
     photoInput.value = '';
     pendingPhoto = null;
     return;
@@ -811,26 +1034,17 @@ photoInput.addEventListener('change', async () => {
   try {
     if (!file.type.startsWith('image/')) throw new Error('The selected file is not an image.');
     const originalData = await fileToDataUrl(file);
-    const reading = entry.readings.find((item) => item.id === pendingPhoto?.readingId && item.source === 'sensor') || null;
+    const survey = state.surveys.find((item) => item.id === selection.surveyId);
+    const entry = survey?.entries.find((item) => item.id === selection.entryId);
+    const reading = entry?.readings.find((item) => item.id === selection.readingId && item.source === 'sensor') || null;
+    if (!survey || !entry) throw new Error('The selected project entry is no longer available.');
     const createdAt = new Date().toISOString();
-    const photo = {
-      id: crypto.randomUUID(),
-      entryName: entry.name,
-      originalData,
-      annotatedData: pendingPhoto?.annotate
-        ? await createAnnotatedPhoto(originalData, survey, entry, reading, createdAt)
-        : null,
-      readingId: reading?.id || null,
-      readingLux: reading ? Number(reading.lux) : null,
-      readingSource: reading?.source || null,
-      createdAt
-    };
-    const surveys = state.surveys.map((item) => item.id === survey.id
-      ? { ...item, entries: item.entries.map((child) => child.id === entry.id
-        ? { ...child, photos: [...child.photos, photo] }
-        : child) }
-      : item);
-    await commit({ ...state, surveys });
+    const saved = await savePhotoForEntry(survey.id, entry.id, originalData, {
+      reading,
+      createdAt,
+      annotate: selection.annotate
+    });
+    if (saved) window.alert('Photo saved to the selected inspection entry.');
   } catch (error) {
     alertError(error, 'Could not save the photo. The original photograph was not changed.');
   } finally {
