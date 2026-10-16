@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f1f3ec" />
+    <title>Feenstra Light Surveys</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="config.js"></script>
+    <script type="module" src="app.bundle.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Feenstra Light Surveys home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>FEENSTRA <strong>LIGHT SURVEYS</strong></span>
+      </a>
+      <span class="offline-indicator"><span></span> LOCAL WORKSPACE</span>
+    </header>
+
+    <main class="layout">
+      <aside class="rail">
+        <div class="rail-heading">
+          <div>
+            <p class="eyebrow">FIELDWORK</p>
+            <h1>Surveys</h1>
+          </div>
+          <button class="icon-button" id="new-survey" type="button" aria-label="Create survey" title="Create survey">+</button>
+        </div>
+        <div id="survey-list" class="survey-list" aria-label="Saved surveys"></div>
+        <div class="rail-footnote"><span class="storage-dot"></span> Saved on this device</div>
+      </aside>
+
+      <section class="workspace" id="workspace" aria-live="polite"></section>
+    </main>
+
+    <dialog id="survey-dialog" class="survey-dialog">
+      <form id="survey-form" method="dialog">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">NEW RECORD</p>
+            <h2>Start a survey</h2>
+          </div>
+          <button class="icon-button quiet" type="button" id="close-dialog" aria-label="Close">×</button>
+        </div>
+        <label>Site or facility<input name="site" maxlength="100" placeholder="e.g. North workshop" required /></label>
+        <label>Client or organisation<input name="client" maxlength="100" placeholder="Optional" /></label>
+        <label>Survey date<input name="date" type="date" required /></label>
+        <div class="dialog-actions">
+          <button class="button secondary" type="button" id="cancel-survey">Cancel</button>
+          <button class="button primary" type="submit">Create survey <span aria-hidden="true">→</span></button>
+        </div>
+      </form>
+    </dialog>
+    <input id="photo-input" type="file" accept="image/*" capture="environment" multiple hidden />
+  </body>
+</html>

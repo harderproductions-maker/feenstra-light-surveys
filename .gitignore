@@ -1,0 +1,6 @@
+node_modules/
+android/
+dist/
+www/app.bundle.js
+__pycache__/
+.DS_Store

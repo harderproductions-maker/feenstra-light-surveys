@@ -1,0 +1,24 @@
+{
+  "name": "feenstra-light-surveys",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Offline lighting surveys and OHS report export",
+  "scripts": {
+    "build": "vite build",
+    "check": "node --check www/app.js",
+    "android:add": "cap add android",
+    "android:sync": "cap sync android",
+    "postinstall": "node scripts/patch_capacitor_cli.cjs"
+  },
+  "dependencies": {
+    "@capacitor/android": "6.2.2",
+    "@capacitor/core": "6.2.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "6.2.2",
+    "vite": "6.4.4"
+  },
+  "overrides": {
+    "tar": "^7.5.21"
+  }
+}
