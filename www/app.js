@@ -212,15 +212,19 @@ async function commit(nextState) {
     await stateReady;
     if (stateLoadError) throw stateLoadError;
     await databaseRequest('readwrite', (store) => store.put(nextState, 'state'));
-    state = nextState;
-    render();
-    return true;
   } catch (error) {
     state = previous;
     alertError(error, 'Could not save the change. Your existing survey data has not been replaced.');
     render();
     return false;
   }
+  state = nextState;
+  try {
+    render();
+  } catch (error) {
+    alertError(error, 'Changes were saved, but the screen could not refresh. Reopen the app to view them.');
+  }
+  return true;
 }
 
 function activeSurvey() {
@@ -298,7 +302,7 @@ function render() {
         </div>
         <div class="top-actions">
           <button class="button secondary" type="button" data-action="project-details">Project details</button>
-          <button class="button secondary" type="button" data-action="reports">Saved reports (${survey.reports.length})</button>
+          <button class="button secondary" type="button" data-action="reports">Saved reports (${survey.reports?.length || 0})</button>
           <button class="button secondary" type="button" data-action="photo" ${entry ? '' : 'disabled'}>Add photo</button>
           <button class="button dark" type="button" data-action="export">Save & export report <span aria-hidden="true">↗</span></button>
         </div>
@@ -897,7 +901,8 @@ surveyForm.addEventListener('submit', async (event) => {
       inspectorName,
       inspectionDate,
       createdAt: new Date().toISOString(),
-      entries: []
+      entries: [],
+      reports: []
     };
   const surveys = previous
     ? state.surveys.map((survey) => survey.id === previous.id ? project : survey)
