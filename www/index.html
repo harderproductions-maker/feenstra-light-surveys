@@ -27,6 +27,10 @@
           </div>
           <button class="icon-button" id="new-survey" type="button" aria-label="Create survey" title="Create survey">+</button>
         </div>
+        <div class="rail-actions">
+          <button class="button secondary" id="import-project" type="button">Import project</button>
+          <input id="project-import-input" type="file" accept="application/json,.json" hidden />
+        </div>
         <div id="survey-list" class="survey-list" aria-label="Saved surveys"></div>
         <div class="rail-footnote"><span class="storage-dot"></span> Saved on this device</div>
       </aside>
@@ -93,7 +97,7 @@
         <h2 id="saved-report-title">Saved report</h2>
         <button class="icon-button quiet" type="button" id="close-report-preview" aria-label="Close">×</button>
       </div>
-      <iframe id="saved-report-frame" title="Saved OHS report preview" sandbox="allow-scripts"></iframe>
+      <iframe id="saved-report-frame" title="Saved OHS report preview" sandbox=""></iframe>
       <div class="dialog-actions"><button class="button secondary" type="button" id="close-report-preview-footer">Close</button></div>
     </dialog>
     <input id="photo-input" type="file" accept="image/*" capture="environment" hidden />

@@ -121,6 +121,7 @@ def main():
         "LightSensorPlugin.java",
         "CameraCapturePlugin.java",
         "CameraCaptureActivity.java",
+        "PdfReportPlugin.java",
         "MainActivity.java",
     ):
         shutil.copy2(java_source / filename, java_destination / filename)

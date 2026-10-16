@@ -6,9 +6,9 @@ On Android, **Start sensor** reads the phone's ambient light sensor and displays
 
 The recommended lux target defaults to **300 lx**. Each entry can keep its own measurements, notes, and photos. On Android, **Take inspection photo** opens the native camera preview, displays the live phone lux reading, and captures the photograph. When the sensor is available, that photo is saved with the exact raw and adjusted reading captured alongside it. The app creates an annotated copy showing the building, entry, capture time, recommended target, and recorded lux; it retains the original image as well. Without a light sensor, the photo is still saved without inventing a measurement. Photos and readings remain attached to their project and named entry.
 
-Exported reports contain every entry, measurement, observation, and photo in the project. **Saved reports** keeps report revisions in the app, where they can be viewed or exported later. Choose **Restore as editable copy** to reopen that revision's project data for further editing without overwriting the original project or saved report.
+Exported PDF reports contain every entry, measurement, observation, and photo in the project. **Saved reports** keeps report revisions in the app, where they can be viewed or exported as PDF later. On Android, the report is rendered locally and Android's print screen lets you save or share the PDF. In a browser, the print dialog lets you save as PDF.
 
-Project records and photos are stored in the app's local IndexedDB database. Keep a copy of each exported report; local records are not synchronized to a server.
+Use **Share project** to export a portable JSON package containing the editable project, entries, measurements, photos, and saved report history. The recipient chooses **Import project** and selects that package; it is added as a separate project, without replacing existing data. Project packages can contain large embedded photos, so share them using a method that supports large files. Project records and photos are otherwise stored in the app's local IndexedDB database and are not synchronized to a server.
 
 ## Build the Android debug APK
 
@@ -16,7 +16,7 @@ The GitHub Actions workflow runs on pushes to `main` and can also be started man
 
 To download it, open the repository's **Actions** tab, select the successful **Build Android Debug APK** run, scroll to **Artifacts**, and click **Feenstra-Light-Surveys-APK**. Download and unzip the artifact to get `app-debug.apk`.
 
-On Android, choose **Save & export report** to save the complete HTML report in Documents and open the Android share sheet to download or share it. In a browser, the report downloads directly as an HTML file; it can also be printed or saved as PDF.
+On Android, choose **Export PDF report** to open Android's print screen, where the report can be saved as a PDF or shared. In a browser, the print dialog can save the report as PDF.
 
 ## Local web preview
 

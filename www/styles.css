@@ -82,6 +82,8 @@ button { color: inherit; }
 }
 
 .rail-heading, .dialog-heading { display: flex; align-items: center; justify-content: space-between; }
+.rail-actions { margin-top: 14px; }
+.rail-actions .button { width: 100%; }
 .eyebrow { margin: 0 0 7px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; }
 h1, h2, h3, p { margin-top: 0; }
 .rail h1 { margin-bottom: 0; font: 600 22px 'Space Grotesk', sans-serif; }

@@ -4,6 +4,7 @@ import { Share } from '@capacitor/share';
 
 const LightSensor = registerPlugin('LightSensor');
 const CameraCapture = registerPlugin('CameraCapture');
+const PdfReport = registerPlugin('PdfReport');
 const storageKey = 'feenstra-light-surveys-v1';
 const databaseName = 'feenstra-light-surveys';
 const recommendedLux = 300;
@@ -23,6 +24,7 @@ const photoInput = document.querySelector('#photo-input');
 const previewDialog = document.querySelector('#photo-preview');
 const reportsDialog = document.querySelector('#reports-dialog');
 const reportPreviewDialog = document.querySelector('#report-preview-dialog');
+const projectImportInput = document.querySelector('#project-import-input');
 
 let database;
 let stateReady;
@@ -304,7 +306,8 @@ function render() {
           <button class="button secondary" type="button" data-action="project-details">Project details</button>
           <button class="button secondary" type="button" data-action="reports">Saved reports (${survey.reports?.length || 0})</button>
           <button class="button secondary" type="button" data-action="photo" ${entry ? '' : 'disabled'}>Add photo</button>
-          <button class="button dark" type="button" data-action="export">Save & export report <span aria-hidden="true">↗</span></button>
+          <button class="button secondary" type="button" data-action="share-project">Share project</button>
+          <button class="button dark" type="button" data-action="export">Export PDF report <span aria-hidden="true">↗</span></button>
         </div>
       </div>
 
@@ -668,38 +671,111 @@ function safeFileName(value) {
   return value.trim().replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') || 'survey';
 }
 
-function encodeBase64(value) {
-  const bytes = new TextEncoder().encode(value);
-  let binary = '';
-  for (let index = 0; index < bytes.length; index += 0x8000) {
-    binary += String.fromCharCode(...bytes.subarray(index, index + 0x8000));
-  }
-  return btoa(binary);
-}
-
 async function downloadReport(report, survey, reportId) {
-  const filename = `OHS-Lighting-Report-${safeFileName(survey.buildingName)}-${reportId.slice(0, 8)}.html`;
   if (Capacitor.isNativePlatform()) {
-    const saved = await Filesystem.writeFile({
-      path: filename,
-      data: encodeBase64(report),
-      directory: Directory.Documents,
-      recursive: true
-    });
-    await Share.share({
-      title: 'OHS Lighting Survey Report',
-      text: `Lighting survey report for ${survey.buildingName}`,
-      url: saved.uri,
-      dialogTitle: 'Export OHS lighting report'
+    await PdfReport.create({
+      html: report,
+      title: `OHS-Lighting-Report-${safeFileName(survey.buildingName)}-${reportId.slice(0, 8)}`
     });
     return;
   }
-  const url = URL.createObjectURL(new Blob([report], { type: 'text/html;charset=utf-8' }));
+  const frame = document.createElement('iframe');
+  frame.title = 'PDF report print preview';
+  frame.style.position = 'fixed';
+  frame.style.width = '1px';
+  frame.style.height = '1px';
+  frame.style.opacity = '0';
+  frame.style.pointerEvents = 'none';
+  frame.srcdoc = report;
+  frame.onload = () => {
+    const printWindow = frame.contentWindow;
+    if (!printWindow) {
+      frame.remove();
+      window.alert('Could not open the PDF print dialog.');
+      return;
+    }
+    printWindow.addEventListener('afterprint', () => frame.remove(), { once: true });
+    printWindow.focus();
+    printWindow.print();
+    window.setTimeout(() => frame.remove(), 60_000);
+  };
+  document.body.append(frame);
+}
+
+function projectPackage(survey) {
+  return {
+    format: 'feenstra-light-surveys-project',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    project: survey
+  };
+}
+
+async function shareProject(survey) {
+  if (!survey.buildingName.trim() || !survey.inspectorName.trim()) {
+    window.alert('Building Name and Inspector Name are required before sharing a project.');
+    return;
+  }
+  const filename = `Feenstra-Project-${safeFileName(survey.buildingName)}.json`;
+  const contents = JSON.stringify(projectPackage(survey));
+  if (Capacitor.isNativePlatform()) {
+    const saved = await Filesystem.writeFile({
+      path: filename,
+      data: contents,
+      directory: Directory.Cache,
+      recursive: true
+    });
+    await Share.share({
+      title: `Share ${survey.buildingName} project`,
+      text: `Editable Feenstra Light Surveys project: ${survey.buildingName}`,
+      url: saved.uri,
+      dialogTitle: 'Share project package'
+    });
+    return;
+  }
+  const url = URL.createObjectURL(new Blob([contents], { type: 'application/json;charset=utf-8' }));
   const link = document.createElement('a');
   link.href = url;
   link.download = filename;
   link.click();
   window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
+
+async function importProject(file) {
+  if (!file) return;
+  await stateReady;
+  if (stateLoadError) throw stateLoadError;
+  if (file.size > 100 * 1024 * 1024) {
+    throw new Error('Project package is larger than 100 MB. Share a smaller project package.');
+  }
+  let bundle;
+  try {
+    bundle = JSON.parse(await file.text());
+  } catch (error) {
+    throw new Error(`Could not read the project package as JSON: ${error.message}`);
+  }
+  if (bundle?.format !== 'feenstra-light-surveys-project' || bundle.version !== 1 || !bundle.project) {
+    throw new Error('This file is not a supported Feenstra Light Surveys project package.');
+  }
+  const project = normalizeSurvey(bundle.project);
+  if (!project.buildingName.trim() || !project.inspectorName.trim()) {
+    throw new Error('The shared project is missing its required building or inspector name.');
+  }
+  const names = project.entries.map((entry) => entry.name.trim().toLocaleLowerCase());
+  if (names.some((name) => !name) || new Set(names).size !== names.length) {
+    throw new Error('The shared project has an empty or repeated inspection entry name.');
+  }
+  project.id = crypto.randomUUID();
+  project.importedAt = new Date().toISOString();
+  const saved = await commit({
+    ...state,
+    surveys: [project, ...state.surveys],
+    activeId: project.id,
+    activeEntryId: project.entries[0]?.id || null
+  });
+  if (saved) {
+    window.alert(`Imported “${project.buildingName}” as a separate editable project. Existing projects were not changed.`);
+  }
 }
 
 async function exportReport(survey) {
@@ -731,11 +807,17 @@ function openReportHistory(survey) {
       <article class="saved-report">
         <div><strong>Report · ${escapeHtml(formatDateTime(report.createdAt))}</strong><span>${escapeHtml(report.id.slice(0, 8))}</span></div>
         <button class="button secondary" type="button" data-report-action="view" data-report-id="${escapeHtml(report.id)}">View</button>
-        <button class="button secondary" type="button" data-report-action="download" data-report-id="${escapeHtml(report.id)}">Export</button>
+        <button class="button secondary" type="button" data-report-action="download" data-report-id="${escapeHtml(report.id)}">Export PDF</button>
         <button class="button primary" type="button" data-report-action="restore" data-report-id="${escapeHtml(report.id)}">Restore as editable copy</button>
       </article>`).join('')
-    : '<p class="empty-list">No saved reports yet. Use Save &amp; export report to preserve a report revision in this project.</p>';
+    : '<p class="empty-list">No saved reports yet. Export a PDF report to preserve a report revision in this project.</p>';
   reportsDialog.showModal();
+}
+
+function restrictReportPreview(html) {
+  const policy = '<meta http-equiv="Content-Security-Policy" content="default-src \'none\'; img-src data:; style-src \'unsafe-inline\'; font-src data:">';
+  if (/<head\b[^>]*>/i.test(html)) return html.replace(/<head\b[^>]*>/i, (head) => `${head}${policy}`);
+  return `<!doctype html><html><head>${policy}</head><body>${html}</body></html>`;
 }
 
 async function restoreReportAsProject(survey, report) {
@@ -789,6 +871,15 @@ workspace.addEventListener('click', async (event) => {
       break;
     case 'export':
       if (survey) await exportReport(survey);
+      break;
+    case 'share-project':
+      if (survey) {
+        try {
+          await shareProject(survey);
+        } catch (error) {
+          alertError(error, 'Could not share the project package.');
+        }
+      }
       break;
     case 'reports':
       if (survey) openReportHistory(survey);
@@ -853,7 +944,7 @@ reportsDialog.addEventListener('click', async (event) => {
   if (!survey || !report) return;
 
   if (button.dataset.reportAction === 'view') {
-    document.querySelector('#saved-report-frame').srcdoc = report.html;
+    document.querySelector('#saved-report-frame').srcdoc = restrictReportPreview(report.html);
     document.querySelector('#saved-report-title').textContent = `Saved report · ${formatDateTime(report.createdAt)}`;
     reportPreviewDialog.showModal();
   } else if (button.dataset.reportAction === 'download') {
@@ -868,6 +959,17 @@ reportsDialog.addEventListener('click', async (event) => {
 });
 
 document.querySelector('#new-survey').addEventListener('click', () => openSurveyDialog());
+document.querySelector('#import-project').addEventListener('click', () => projectImportInput.click());
+projectImportInput.addEventListener('change', async () => {
+  const file = projectImportInput.files?.[0];
+  try {
+    await importProject(file);
+  } catch (error) {
+    alertError(error, 'Could not import the project package.');
+  } finally {
+    projectImportInput.value = '';
+  }
+});
 document.querySelector('#close-dialog').addEventListener('click', () => surveyDialog.close());
 document.querySelector('#cancel-survey').addEventListener('click', () => surveyDialog.close());
 document.querySelector('#close-photo-dialog').addEventListener('click', () => photoDialog.close());
