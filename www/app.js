@@ -15,6 +15,8 @@ const photoInput = document.querySelector('#photo-input');
 const previewDialog = document.querySelector('#photo-preview');
 
 let database;
+let stateReady;
+let stateLoadError = null;
 let state = { surveys: [], activeId: null, activeEntryId: null };
 let liveLux = null;
 let liveLuxAt = null;
@@ -41,6 +43,10 @@ function openDatabase() {
 
 function databaseRequest(mode, action) {
   return new Promise((resolve, reject) => {
+    if (!database) {
+      reject(new Error('Local survey storage has not finished initializing.'));
+      return;
+    }
     const transaction = database.transaction('workspace', mode);
     const request = action(transaction.objectStore('workspace'));
     let result;
@@ -163,13 +169,15 @@ async function loadState() {
 
 async function commit(nextState) {
   const previous = state;
-  state = nextState;
   try {
+    await stateReady;
+    if (stateLoadError) throw stateLoadError;
     await databaseRequest('readwrite', (store) => store.put(nextState, 'state'));
+    state = nextState;
     render();
     return true;
   } catch (error) {
-    if (state === nextState) state = previous;
+    state = previous;
     alertError(error, 'Could not save the change. Your existing survey data has not been replaced.');
     render();
     return false;
@@ -639,6 +647,11 @@ document.querySelector('#close-photo-preview').addEventListener('click', () => p
 
 surveyForm.addEventListener('submit', async (event) => {
   event.preventDefault();
+  await stateReady;
+  if (stateLoadError) {
+    alertError(stateLoadError, 'Project storage is unavailable. No changes were saved.');
+    return;
+  }
   const form = new FormData(surveyForm);
   const buildingName = String(form.get('buildingName') || '').trim();
   const inspectorName = String(form.get('inspectorName') || '').trim();
@@ -671,8 +684,15 @@ surveyForm.addEventListener('submit', async (event) => {
 });
 
 workspace.addEventListener('submit', async (event) => {
+  if (!['new-entry-form', 'entry-details-form', 'measurement-form'].includes(event.target.id)) return;
+  event.preventDefault();
+  await stateReady;
+  if (stateLoadError) {
+    alertError(stateLoadError, 'Project storage is unavailable. No changes were saved.');
+    return;
+  }
+
   if (event.target.id === 'new-entry-form') {
-    event.preventDefault();
     const survey = activeSurvey();
     const form = new FormData(event.target);
     const name = String(form.get('name') || '').trim();
@@ -693,7 +713,6 @@ workspace.addEventListener('submit', async (event) => {
   }
 
   if (event.target.id === 'entry-details-form') {
-    event.preventDefault();
     const survey = activeSurvey();
     const entry = activeEntry();
     const form = new FormData(event.target);
@@ -714,8 +733,6 @@ workspace.addEventListener('submit', async (event) => {
     return;
   }
 
-  if (event.target.id !== 'measurement-form') return;
-  event.preventDefault();
   const survey = activeSurvey();
   const entry = activeEntry();
   const form = new FormData(event.target);
@@ -828,7 +845,8 @@ previewDialog.addEventListener('click', (event) => {
     : `Annotated photograph · ${formatDateTime(previewPhoto.createdAt)}${previewPhoto.readingLux === null ? '' : ` · ${formatLux(previewPhoto.readingLux)} lx recorded`}`;
 });
 
-loadState().catch((error) => {
+stateReady = loadState().catch((error) => {
+  stateLoadError = error;
   workspace.innerHTML = '<div class="empty-state"><h2>Survey storage is unavailable.</h2><p>Your stored project data was not changed. Check device storage permissions and reopen the app.</p></div>';
   alertError(error, 'Could not load saved survey data.');
 });
