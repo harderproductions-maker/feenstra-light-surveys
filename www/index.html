@@ -39,19 +39,47 @@
         <div class="dialog-heading">
           <div>
             <p class="eyebrow">NEW RECORD</p>
-            <h2>Start a survey</h2>
+            <h2 id="survey-dialog-title">Start a project</h2>
           </div>
           <button class="icon-button quiet" type="button" id="close-dialog" aria-label="Close">×</button>
         </div>
-        <label>Site or facility<input name="site" maxlength="100" placeholder="e.g. North workshop" required /></label>
-        <label>Client or organisation<input name="client" maxlength="100" placeholder="Optional" /></label>
-        <label>Survey date<input name="date" type="date" required /></label>
+        <label>Building Name<input name="buildingName" maxlength="100" placeholder="e.g. North workshop" required /></label>
+        <label>Inspector Name<input name="inspectorName" maxlength="100" placeholder="Full name" required /></label>
+        <label>Inspection date<input name="inspectionDate" type="date" required /></label>
         <div class="dialog-actions">
           <button class="button secondary" type="button" id="cancel-survey">Cancel</button>
-          <button class="button primary" type="submit">Create survey <span aria-hidden="true">→</span></button>
+          <button class="button primary" id="survey-dialog-submit" type="submit">Create project →</button>
         </div>
       </form>
     </dialog>
-    <input id="photo-input" type="file" accept="image/*" capture="environment" multiple hidden />
+    <dialog id="photo-dialog" class="survey-dialog">
+      <form id="photo-form">
+        <div class="dialog-heading">
+          <div><p class="eyebrow">INSPECTION PHOTO</p><h2>Associate a measurement</h2></div>
+          <button class="icon-button quiet" type="button" id="close-photo-dialog" aria-label="Close">×</button>
+        </div>
+        <label>Saved phone sensor reading for this entry
+          <select name="readingId"></select>
+        </label>
+        <label class="check-label"><input type="checkbox" name="annotate" checked /> Display and save measurement details on the photo</label>
+        <p class="dialog-note">A lux value is shown only when a saved measurement from this entry is selected. The original photograph is retained.</p>
+        <div class="dialog-actions">
+          <button class="button secondary" type="button" id="cancel-photo">Cancel</button>
+          <button class="button primary" type="submit">Open camera / photos</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="photo-preview" class="preview-dialog">
+      <div class="preview-heading">
+        <p id="photo-preview-caption"></p>
+        <button class="icon-button quiet" type="button" id="close-photo-preview" aria-label="Close">×</button>
+      </div>
+      <img id="photo-preview-image" alt="Inspection photo" />
+      <div class="preview-actions">
+        <button class="button secondary" type="button" data-preview-mode="original">View original</button>
+        <button class="button secondary" type="button" data-preview-mode="annotated">View annotated</button>
+      </div>
+    </dialog>
+    <input id="photo-input" type="file" accept="image/*" capture="environment" hidden />
   </body>
 </html>
