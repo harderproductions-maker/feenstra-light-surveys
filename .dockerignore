@@ -1,0 +1,13 @@
+.git
+.github
+.gradle
+.idea
+.vscode
+node_modules
+android
+android-src
+Docs
+dist
+Feenstra-Building-And-OHS.apk
+.env
+*.log

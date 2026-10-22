@@ -1,0 +1,3317 @@
+{
+  "properties": [
+    {
+      "id": "hatfield-studios",
+      "name": "Hatfield Studios",
+      "city": "Pretoria"
+    },
+    {
+      "id": "brooklyn-studios",
+      "name": "Brooklyn Studios",
+      "city": "Pretoria"
+    },
+    {
+      "id": "festivals-edge",
+      "name": "Festival’s Edge",
+      "city": "Pretoria"
+    },
+    {
+      "id": "studios-at-burnett",
+      "name": "Studios@Burnett",
+      "city": "Pretoria"
+    },
+    {
+      "id": "fountains-view",
+      "name": "Fountains View",
+      "city": "Pretoria"
+    },
+    {
+      "id": "hluma-studios",
+      "name": "Hluma Studios",
+      "city": "Pretoria"
+    },
+    {
+      "id": "kingsway-place",
+      "name": "Kingsway Place",
+      "city": "Johannesburg"
+    },
+    {
+      "id": "apex-studios",
+      "name": "Apex Studios",
+      "city": "Johannesburg"
+    },
+    {
+      "id": "braamfontein-central",
+      "name": "Braamfontein Project / Central Studios",
+      "city": "Johannesburg"
+    },
+    {
+      "id": "arteria-parktown",
+      "name": "Arteria Parktown",
+      "city": "Johannesburg"
+    },
+    {
+      "id": "horizon-heights",
+      "name": "Horizon Heights",
+      "city": "Johannesburg"
+    },
+    {
+      "id": "crescent-studios",
+      "name": "Crescent Studios",
+      "city": "Johannesburg"
+    },
+    {
+      "id": "richmond-central",
+      "name": "Richmond Central",
+      "city": "Johannesburg"
+    },
+    {
+      "id": "the-richmond",
+      "name": "The Richmond",
+      "city": "Johannesburg"
+    },
+    {
+      "id": "peak-studios",
+      "name": "Peak Studios",
+      "city": "Cape Town"
+    },
+    {
+      "id": "varsity-studios",
+      "name": "Varsity Studios",
+      "city": "South Africa"
+    }
+  ],
+  "templates": [
+    {
+      "id": "admin-office-reception-area",
+      "title": "Admin Office & Reception Area",
+      "sourceFile": "BuildingCheckAdminOfficeReceptionArea_APEX_CL26004659_25Sep26_073100.pdf",
+      "questions": [
+        {
+          "id": "all-emergency-contact-details-at-the-reception-d-1",
+          "label": "All emergency contact details at the reception desk for after hour",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "emergency-with-staff-speed-dials-2",
+          "label": "emergency with staff speed dials?",
+          "type": "yes-no-na",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "all-old-posters-removed-and-new-ones-in-order-3",
+          "label": "All old posters removed and new ones in order?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "cleaning-register-signed-and-updated-4",
+          "label": "Cleaning register signed and updated?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "printer-in-a-good-working-condition-5",
+          "label": "Printer in a good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "date-when-cartridge-was-replaced-6",
+          "label": "Date when cartridge was replaced?",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "date-when-printer-was-serviced-7",
+          "label": "Date when printer was serviced?",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "fridge-in-a-working-condition-8",
+          "label": "Fridge in a working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "client-chairs-in-good-working-condition-9",
+          "label": "Client chairs in good working condition?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-chairs-10",
+          "label": "How many chairs?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "office-chairs-in-good-working-condition-11",
+          "label": "Office chairs in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "how-many-chairs-12",
+          "label": "How many chairs?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "office-desks-in-good-working-condition-13",
+          "label": "Office desks in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "how-many-chairs-14",
+          "label": "How many chairs?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "kettle-in-a-workable-condition-15",
+          "label": "Kettle in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "light-bulbs-in-a-working-condition-16",
+          "label": "Light bulbs in a working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "microwave-in-a-workable-condition-17",
+          "label": "Microwave in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "office-reception-dustbins-in-place-and-in-good-c-18",
+          "label": "Office & reception dustbins in place and in good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "office-and-reception-landlines-in-a-workable-con-19",
+          "label": "Office and reception landlines in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "shredder-good-working-condition-20",
+          "label": "Shredder good working condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "staff-toilet-clean-with-hand-soap-toilet-paper-21",
+          "label": "Staff toilet, clean, with hand soap & toilet paper?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "tiles-carpets-in-a-good-condition-22",
+          "label": "Tiles/Carpets in a good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "water-dispenser-in-a-good-working-condition-23",
+          "label": "Water dispenser in a good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "cleaning",
+      "title": "Cleaning",
+      "sourceFile": "BuildingCheckCleaning_APEX_CL26004722_27Sep26_033700.pdf",
+      "questions": [
+        {
+          "id": "is-there-a-cleaning-sla-in-place-1",
+          "label": "Is there a cleaning SLA in place?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "who-is-the-service-provider-2",
+          "label": "Who is the service provider?",
+          "type": "text",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "what-is-the-expiry-date-of-the-sla-3",
+          "label": "What is the expiry date of the SLA?",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-cleaners-on-site-mon-fri-4",
+          "label": "How many cleaners on site Mon - Fri",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-cleaners-on-site-sat-sun-public-holiday-5",
+          "label": "How many cleaners on site - Sat, Sun & public holidays?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-night-shift-cleaners-on-site-6",
+          "label": "How many night shift cleaners on site?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "cleaning-register-signed-and-updated-7",
+          "label": "Cleaning register signed and updated?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "cleaners-dressed-in-uniform-8",
+          "label": "Cleaners dressed in uniform?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "cleaners-lockers-on-site-and-in-good-working-con-9",
+          "label": "Cleaners lockers on site and in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "cleaners-room-stock-room-neat-and-tidy-10",
+          "label": "Cleaners room & stock room neat and tidy?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "cleaners-bathroom-clean-11",
+          "label": "Cleaners bathroom clean?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "was-the-monthly-cleaning-meeting-held-12",
+          "label": "Was the monthly cleaning meeting held?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "date-of-the-last-meeting-13",
+          "label": "Date of the last meeting ?",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "cleaning-monthly-meeting-minutes-submitted-14",
+          "label": "Cleaning monthly meeting minutes submitted?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "was-student-life-included-in-the-meeting-15",
+          "label": "Was Student Life included in the meeting?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "housekeeping-on-site-16",
+          "label": "Housekeeping on site?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "is-there-a-hygiene-sla-in-place-17",
+          "label": "Is there a hygiene SLA in place?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "who-is-the-service-provider-18",
+          "label": "Who is the service provider?",
+          "type": "text",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "what-is-the-expiry-date-of-the-sla-19",
+          "label": "What is the expiry date of the SLA?",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-frequently-does-the-sani-bins-get-serviced-20",
+          "label": "How frequently does the sani bins get serviced?",
+          "type": "text",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-sani-bins-on-site-21",
+          "label": "How many sani bins on site?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "all-sani-bins-in-good-working-order-22",
+          "label": "All sani bins in good working order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "common-areas-interior",
+      "title": "Common Areas Interior",
+      "sourceFile": "BuildingCheckCommonAreasInterior_APEX_CL26004723_27Sep26_034000.pdf",
+      "questions": [
+        {
+          "id": "carpets-in-acceptable-condition-1",
+          "label": "Carpets in acceptable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "ceiling-in-acceptable-condition-2",
+          "label": "Ceiling in acceptable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "cleaning-register-signed-and-updated-3",
+          "label": "Cleaning register signed and updated?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "door-frames-in-acceptable-condition-4",
+          "label": "Door frames in acceptable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "doors-handles-hinges-kick-plates-in-acceptable-c-5",
+          "label": "Doors, handles, hinges, kick plates in acceptable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "floor-skirtings-in-acceptable-condition-6",
+          "label": "Floor skirtings in acceptable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "floor-tiles-in-acceptable-condition-7",
+          "label": "Floor tiles in acceptable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "is-lighting-level-adequate-8",
+          "label": "Is lighting level adequate?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "is-ventilation-adequate-9",
+          "label": "Is ventilation adequate?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "is-lift-lobbies-painting-in-acceptable-condition-10",
+          "label": "is lift lobbies painting in acceptable condition?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "stair-handles-in-place-11",
+          "label": "Stair handles in place?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "stairs-strips-in-place-12",
+          "label": "Stairs strips in place?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "walls-painting-or-wall-paper-in-acceptable-condi-13",
+          "label": "Walls painting or wall paper in acceptable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "communal-kitchens-bathrooms-toile",
+      "title": "Communal Kitchens Bathrooms Toile",
+      "sourceFile": "BuildingCheckCommunalKitchensBathroomsToile_APEX_CL26004724_27Sep26_034400.pdf",
+      "questions": [
+        {
+          "id": "cleaning-register-signed-and-updated-1",
+          "label": "Cleaning register signed and updated?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "are-hand-dryers-in-good-working-condition-2",
+          "label": "Are hand dryers in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "are-hand-soap-dispensers-in-good-working-conditi-3",
+          "label": "Are hand soap dispensers in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "are-female-bathroom-basins-in-good-order-4",
+          "label": "Are female bathroom basins in good order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "are-female-shower-curtains-in-good-order-5",
+          "label": "Are female shower curtains in good order?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "are-female-showers-in-good-order-6",
+          "label": "Are female showers in good order?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "are-female-toilets-in-good-order-7",
+          "label": "Are female toilets in good order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "are-male-bathroom-basins-in-good-order-8",
+          "label": "Are male bathroom basins in good order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "are-male-shower-curtains-in-good-order-9",
+          "label": "Are male shower curtains in good order?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "are-male-showers-in-good-order-10",
+          "label": "Are male showers in good order?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "are-male-toilets-in-good-order-11",
+          "label": "Are male toilets in good order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "are-all-sani-bins-in-good-order-12",
+          "label": "Are all sani bins in good order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "are-all-toilet-brushes-in-female-bathroom-in-goo-13",
+          "label": "Are all toilet brushes in female bathroom in good order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "are-all-toilet-brushes-in-male-bathroom-in-good--14",
+          "label": "Are all toilet brushes in male bathroom in good order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "are-all-mirrors-in-good-order-15",
+          "label": "Are all mirrors in good order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "are-all-kitchen-dustbins-in-good-order-16",
+          "label": "Are all kitchen dustbins in good order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "are-all-chairs-in-good-order-17",
+          "label": "Are all chairs in good order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "are-all-kitchen-tables-in-good-order-18",
+          "label": "Are all kitchen tables in good order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "are-all-microwaves-in-good-working-order-19",
+          "label": "Are all microwaves in good working order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "are-all-ovens-in-good-working-order-20",
+          "label": "Are all ovens in good working order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "are-all-stoves-in-good-working-order-21",
+          "label": "Are all stoves in good working order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "are-all-sink-bowls-in-good-working-order-22",
+          "label": "Are all sink bowls in good working order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "are-all-hot-water-boilers-in-good-working-order-23",
+          "label": "Are all hot water boilers in good working order?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "are-all-counter-tops-in-good-working-order-24",
+          "label": "Are all counter tops in good working order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "electrical",
+      "title": "Electrical",
+      "sourceFile": "BuildingCheckElectrical_APEX_CL26004725_27Sep26_035700.pdf",
+      "questions": [
+        {
+          "id": "all-common-area-lights-in-a-workable-condition-1",
+          "label": "All common area lights in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "all-passages-lights-in-a-workable-condition-2",
+          "label": "All passages lights in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "cleaning-register-signed-and-updated-3",
+          "label": "Cleaning register signed and updated?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "db-room-clean-4",
+          "label": "DB room clean?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "distribution-boards-labelled-5",
+          "label": "Distribution boards labelled?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "are-the-distribution-boards-in-good-working-cond-6",
+          "label": "Are the Distribution boards in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "date-of-last-testing-7",
+          "label": "Date of last testing",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-distribution-boards-in-the-building-8",
+          "label": "How many distribution boards in the building?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "do-we-have-compliance-certificate-9",
+          "label": "Do we have Compliance Certificate?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "is-the-electric-fencing-in-good-working-conditio-10",
+          "label": "Is the electric fencing in good working condition?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "emergency-lighting-testing-done-11",
+          "label": "Emergency lighting testing done?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "is-the-transformer-in-good-working-condition-12",
+          "label": "Is the transformer in good working condition?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "who-owns-the-transformer-13",
+          "label": "Who owns the transformer?",
+          "type": "text",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "is-lightning-protection-in-good-working-conditio-14",
+          "label": "Is lightning protection in good working condition?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "date-of-last-service-15",
+          "label": "Date of last service",
+          "type": "date",
+          "photo": false,
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "equipment",
+      "title": "Equipment",
+      "sourceFile": "BuildingcheckEquipment_APEX_CL26004727_27Sep26_042100.pdf",
+      "questions": [
+        {
+          "id": "all-air-conditioning-in-good-working-order-1",
+          "label": "All Air-conditioning in good working order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "date-of-last-service-2",
+          "label": "Date of last service",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "biometrics-readers-in-a-workable-condition-3",
+          "label": "Biometrics readers in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "facial-readers-in-a-workable-condition-4",
+          "label": "Facial readers in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "door-card-reader-in-a-workable-condition-5",
+          "label": "Door card reader in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "turnstiles-in-a-workable-condition-6",
+          "label": "Turnstiles in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "cctv-cameras-in-good-working-condition-7",
+          "label": "CCTV cameras in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "cctv-monitors-in-good-working-condition-8",
+          "label": "CCTV monitors in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "extractor-fans-in-good-working-condition-9",
+          "label": "Extractor fans in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "when-was-last-fire-drill-conducted-10",
+          "label": "When was last fire drill conducted?",
+          "type": "date",
+          "photo": false,
+          "required": false,
+          "attachmentLabel": "fire drill register"
+        },
+        {
+          "id": "fire-panel-in-good-working-condition-11",
+          "label": "Fire panel in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "date-of-last-service-12",
+          "label": "Date of last service",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "fire-equipment-last-service-date-13",
+          "label": "Fire Equipment last service date?",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "fire-extinguishers-in-good-working-condition-14",
+          "label": "Fire extinguishers in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "how-many-fire-extinguishers-15",
+          "label": "How many fire extinguishers?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "fire-hose-reels-in-good-working-condition-16",
+          "label": "Fire hose reels in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "how-many-hose-reels-17",
+          "label": "How many hose reels?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "fire-hydrants-in-good-working-condition-18",
+          "label": "Fire hydrants in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "how-many-fire-hydrants-19",
+          "label": "How many fire hydrants?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "are-the-fire-pumps-in-good-working-condition-20",
+          "label": "Are the fire pumps in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "how-many-fire-pumps-21",
+          "label": "How many fire pumps?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "last-fire-pumps-service-date-22",
+          "label": "Last fire pumps service date?",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "are-generators-in-good-working-condition-23",
+          "label": "Are generators in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "date-of-last-service-24",
+          "label": "Date of last service",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "size-of-generator-25",
+          "label": "Size of generator?",
+          "type": "text",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "are-heatpumps-in-good-working-condition-26",
+          "label": "Are heatpumps in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "date-of-last-service-27",
+          "label": "Date of last service",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "is-the-inverter-installation-in-good-working-con-28",
+          "label": "Is the Inverter installation in good working condition?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "date-of-inverter-installation-29",
+          "label": "Date of inverter installation?",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "are-batteries-in-good-working-condition-30",
+          "label": "Are batteries in good working condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "are-lifts-in-good-working-condition-31",
+          "label": "Are lifts in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "how-many-lifts-32",
+          "label": "How many lifts?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "where-is-lifts-service-records-kept-in-33",
+          "label": "Where is lifts service records kept in?",
+          "type": "text",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "date-of-last-annexure-b-34",
+          "label": "Date of last Annexure B?",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "are-the-booster-pumps-in-good-working-condition-35",
+          "label": "Are the booster pumps in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "date-of-last-service-36",
+          "label": "Date of last service",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "number-of-booster-pumps-37",
+          "label": "Number of booster pumps?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "are-the-sump-pumps-in-good-working-condition-38",
+          "label": "Are the sump pumps in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "date-of-last-service-39",
+          "label": "Date of last service",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "water-purifying-last-testing-date-40",
+          "label": "Water Purifying last testing date?",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "water-purifying-plant-working-and-in-good-condit-41",
+          "label": "Water purifying plant working and in good condition?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "wifi-provider-42",
+          "label": "WIFI Provider",
+          "type": "text",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "wifi-sla-in-place-43",
+          "label": "WIFI SLA in place?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "external-internal",
+      "title": "External & Internal",
+      "sourceFile": "BuildingcheckExternalInternal_APEX_CL26004728_27Sep26_043000.pdf",
+      "questions": [
+        {
+          "id": "general-appearance-of-the-building-1",
+          "label": "General appearance of the building.",
+          "type": "rating",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "shop-fronts-in-a-good-condition-2",
+          "label": "Shop fronts in a good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "walk-off-carpets-in-a-good-condition-3",
+          "label": "Walk off carpets in a good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "doors-in-a-good-condition-4",
+          "label": "Doors in a good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "entrance-sliding-door-in-a-workable-condition-5",
+          "label": "Entrance Sliding door in a workable condition?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "sliding-door-last-service-date-6",
+          "label": "Sliding door last service date?",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "gate-motor-operational-7",
+          "label": "Gate Motor operational",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "roller-shutter-operational-8",
+          "label": "Roller shutter operational?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "roller-shutter-last-service-date-9",
+          "label": "Roller shutter last service date",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "boom-gate-operational-10",
+          "label": "Boom gate operational?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "basement-parking-lights-in-a-workable-conditions-11",
+          "label": "Basement parking lights in a workable conditions?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "parking-lines-clear-and-visable-12",
+          "label": "Parking Lines clear and visable?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "planter-box-lights-in-a-workable-condition-13",
+          "label": "Planter box lights in a workable condition?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "spotlights-in-a-workable-condition-14",
+          "label": "Spotlights in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "walls-in-good-condition-15",
+          "label": "Walls in good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "window-putty-in-good-condition-16",
+          "label": "Window putty in good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "windows-in-good-condition-17",
+          "label": "Windows in good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "anchor-bolts-last-service-date-18",
+          "label": "Anchor Bolts last service date.",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "anchor-bolts-next-service-date-19",
+          "label": "Anchor Bolts next service date.",
+          "type": "date",
+          "photo": false,
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "games-room-roof-and-chill-areas",
+      "title": "Games Room, Roof and Chill areas",
+      "sourceFile": "BuildingcheckGamesRoomRoofandChillareas_APEX_CL26004729_27Sep26_053600.pdf",
+      "questions": [
+        {
+          "id": "aircon-in-a-workable-condition-1",
+          "label": "Aircon in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "any-broken-equipment-2",
+          "label": "Any broken equipment?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "bibo-in-a-workable-condition-3",
+          "label": "Bibo in a workable condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "blinds-in-a-good-condition-4",
+          "label": "Blinds in a good condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "astro-turf-in-a-good-condition-5",
+          "label": "Astro turf in a good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "basket-ball-hoops-in-a-workable-condition-6",
+          "label": "Basket ball hoops in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "braai-area-grids-in-place-7",
+          "label": "Braai area grids in place?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "number-of-braai-grids-8",
+          "label": "Number of braai grids",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "braai-basin-in-a-workable-condition-9",
+          "label": "Braai basin in a workable condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "folding-doors-in-place-and-not-cracked-10",
+          "label": "Folding doors in place and not cracked?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "bins-in-good-condition-11",
+          "label": "Bins in good condition?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "number-of-bins-12",
+          "label": "Number of bins",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "light-bulbs-in-a-workable-condition-13",
+          "label": "Light bulbs in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "pergola-wood-in-a-good-condition-14",
+          "label": "Pergola wood in a good condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "stretch-shade-net-on-roof-in-a-good-condition-15",
+          "label": "Stretch shade net on roof in a good condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "pool-broom-in-working-order-16",
+          "label": "Pool broom in working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "pool-cleaning-pipes-in-working-order-17",
+          "label": "Pool cleaning pipes in working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "pool-cover-in-working-order-18",
+          "label": "Pool cover in working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "pool-creepy-crawler-in-working-condition-19",
+          "label": "Pool creepy crawler in working condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "pool-inflatable-balls-in-good-condition-20",
+          "label": "Pool inflatable balls in good condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "pool-net-in-working-order-21",
+          "label": "Pool net in working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "pool-vacuum-in-working-order-22",
+          "label": "Pool vacuum in working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "chairs-in-good-condition-23",
+          "label": "Chairs in good condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "tables-in-good-condition-24",
+          "label": "Tables in good condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "swings-on-the-roof-in-good-condition-25",
+          "label": "Swings on the roof in good condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "swing-cushions-in-good-condition-26",
+          "label": "Swing cushions in good condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "bean-bags-in-good-condition-27",
+          "label": "Bean Bags in good condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "high-cocktail-chairs-in-good-condition-28",
+          "label": "High/cocktail chairs in good condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "beach-chairs-in-good-condition-29",
+          "label": "Beach chairs in good condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "pool-patio-set-in-a-workable-condition-30",
+          "label": "Pool patio set in a workable condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "patio-umbrellas-in-good-working-condition-31",
+          "label": "Patio umbrellas in good working condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "couches-in-good-condition-32",
+          "label": "Couches in good condition",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "hdmi-cables-in-working-condition-33",
+          "label": "HDMI cables in working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "number-of-hdmi-cables-34",
+          "label": "Number of HDMI cables",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "decoders-in-working-condition-35",
+          "label": "Decoders in working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "number-of-decoders-36",
+          "label": "Number of decoders",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "tvs-in-working-condition-37",
+          "label": "TVs in working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "number-of-tvs-38",
+          "label": "Number of TVs",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "tv-remotes-in-working-condition-39",
+          "label": "TV remotes in working condition?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "playstation-in-working-condition-40",
+          "label": "PlayStation in working condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "xbox-in-working-condition-41",
+          "label": "XBOX in working condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "air-hockey-disks-good-condition-42",
+          "label": "Air Hockey disks good condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "air-hockey-paddles-in-good-condition-43",
+          "label": "Air Hockey paddles in good condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "air-hockey-table-good-condition-44",
+          "label": "Air Hockey table good condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "beach-tennis-set-in-working-condition-45",
+          "label": "Beach tennis set in working condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "bowls-set-in-working-condition-46",
+          "label": "Bowls set in working condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-chess-magnets-pieces-47",
+          "label": "How many chess magnets/pieces?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "table-tennis-table-in-working-condition-48",
+          "label": "Table tennis table in working condition ?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "number-of-table-tennis-tables-49",
+          "label": "Number of table tennis tables",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "table-tennis-balls-in-working-condition-50",
+          "label": "Table tennis balls in working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "number-of-table-tennis-balls-51",
+          "label": "Number of table tennis balls",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "table-tennis-paddles-in-good-working-condition-52",
+          "label": "Table tennis paddles in good working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "number-of-table-tennis-paddles-53",
+          "label": "Number of table tennis paddles",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "tennis-rackets-in-working-conditions-54",
+          "label": "Tennis rackets in working conditions?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "nauts-and-crosses-pieces-in-working-condition-55",
+          "label": "Nauts and crosses pieces in working condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "netballs-in-working-condition-56",
+          "label": "Netballs in working condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "scrabble-letters-in-working-condition-57",
+          "label": "Scrabble letters in working condition ?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "volley-ball-set-in-working-condition-58",
+          "label": "Volley ball set in working condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "pool-table-in-working-condition-59",
+          "label": "Pool table in working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "number-of-pool-tables-60",
+          "label": "Number of pool tables",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "pool-balls-in-working-condition-61",
+          "label": "Pool balls in working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "number-of-pool-balls-62",
+          "label": "Number of pool balls",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "pool-cues-in-working-condition-63",
+          "label": "Pool cues in working condition?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "number-of-pool-cues-64",
+          "label": "Number of pool cues",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "soccer-balls-in-working-condition-65",
+          "label": "Soccer balls in working condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "chess-board-in-working-condition-66",
+          "label": "Chess board in working condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "boules-set-in-working-condition-67",
+          "label": "Boules set in working condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "foosball-table-in-working-condition-68",
+          "label": "Foosball table in working condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "arcade-games-in-working-condition-69",
+          "label": "Arcade games in working condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "cleaning-register-signed-and-updated-70",
+          "label": "Cleaning register signed and updated?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "general",
+      "title": "General",
+      "sourceFile": "BuildingcheckGeneral_APEX_CL26004730_27Sep26_063100.pdf",
+      "questions": [
+        {
+          "id": "any-insurance-claims-submitted-and-approved-duri-1",
+          "label": "Any insurance claims submitted and approved during the month?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "boardroom-aircon-in-a-workable-condition-2",
+          "label": "Boardroom aircon in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "boardroom-bibo-in-a-workable-condition-3",
+          "label": "Boardroom Bibo in a workable condition?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "boardroom-carpets-in-a-good-condition-4",
+          "label": "Boardroom carpets in a good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "boardroom-chairs-in-a-good-condition-5",
+          "label": "Boardroom chairs in a good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "boardroom-hdmi-cable-on-site-6",
+          "label": "Boardroom HDMI cable on site?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "boardroom-plugs-in-a-workable-condition-7",
+          "label": "Boardroom plugs in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "boardroom-projector-tv-screen-in-a-workable-cond-8",
+          "label": "Boardroom projector/TV screen in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "boardroom-table-in-a-good-condition-9",
+          "label": "Boardroom table in a good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "building-store-room-clean-and-tidy-10",
+          "label": "Building store room clean and tidy?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "electricity-meter-photo-submission-reading-11",
+          "label": "Electricity meter photo submission & reading?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false,
+          "attachmentLabel": "Meter reading photo"
+        },
+        {
+          "id": "meter-reading-12",
+          "label": "Meter reading",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "meter-reading-date-13",
+          "label": "Meter reading date",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "water-meter-photo-submission-reading-14",
+          "label": "Water meter photo submission & reading ?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false,
+          "attachmentLabel": "Meter reading photo"
+        },
+        {
+          "id": "meter-reading-15",
+          "label": "Meter reading",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "meter-reading-date-16",
+          "label": "Meter reading date",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-disable-units-in-the-building-17",
+          "label": "How many disable units in the building?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-vacant-beds-on-site-18",
+          "label": "How many vacant beds on site?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "were-there-leases-cancelled-abscond-during-the-m-19",
+          "label": "Were there leases cancelled/Abscond during the month?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "inspections-done-and-charged-on-mda-for-cancelle-20",
+          "label": "Inspections done and charged on MDA for cancelled/Absconds?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "is-all-the-equipment-in-the-vacant-rooms-21",
+          "label": "Is all the equipment in the vacant rooms?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "is-the-vacant-room-clean-22",
+          "label": "Is the vacant room clean?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "it-server-room-aircon-in-a-workable-condition-23",
+          "label": "IT Server room aircon in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "it-server-room-clean-24",
+          "label": "IT Server room clean?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "maintenance-key-box-drilled-against-the-wall-25",
+          "label": "Maintenance key box drilled against the wall?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "maintenance-safe-drilled-against-the-wall-26",
+          "label": "Maintenance safe drilled against the wall?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "showroom-stock-items-washed-and-stored-27",
+          "label": "Showroom stock items washed and stored?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false,
+          "attachmentLabel": "stock list"
+        }
+      ]
+    },
+    {
+      "id": "gym-area-outdoor-and-indoor",
+      "title": "Gym Area Outdoor and Indoor",
+      "sourceFile": "BuildingcheckGymAreaOutdoorandIndoor_APEX_CL26004731_27Sep26_121100.pdf",
+      "questions": [
+        {
+          "id": "aircon-in-a-workable-condition-1",
+          "label": "Aircon in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "gym-room-floor-interlocking-tiles-rubber-floorin-2",
+          "label": "Gym room floor/interlocking tiles/rubber flooring in a good condition?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "mirrors-in-gym-in-good-working-order-3",
+          "label": "Mirrors in gym in good working order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "any-gym-equipment-broken-4",
+          "label": "Any gym equipment broken?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "treadmills-in-good-working-order-5",
+          "label": "Treadmills in good working order?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "number-6",
+          "label": "Number",
+          "type": "number",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "abdomen-myo-boards-in-good-working-order-7",
+          "label": "Abdomen myo boards in good working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "boxing-bag-in-good-working-order-8",
+          "label": "Boxing bag in good working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "battle-ropes-in-good-working-order-9",
+          "label": "Battle ropes in good working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "benches-in-good-working-order-10",
+          "label": "Benches in good working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "exercise-balls-in-good-working-order-11",
+          "label": "Exercise balls in good working order?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "number-12",
+          "label": "Number",
+          "type": "number",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "exercise-bikes-in-good-working-order-13",
+          "label": "Exercise bikes in good working order?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "number-14",
+          "label": "Number",
+          "type": "number",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "hammer-bumper-plates-in-good-working-order-15",
+          "label": "Hammer bumper plates in good working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "kettlebell-in-good-working-order-16",
+          "label": "Kettlebell in good working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "olympic-chrome-bars-in-good-working-order-17",
+          "label": "Olympic chrome bars in good working order?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "number-18",
+          "label": "Number",
+          "type": "number",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "outdoor-exercise-pull-up-machine-in-good-working-19",
+          "label": "Outdoor exercise pull up machine in good working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "rope-anchor-in-good-working-order-20",
+          "label": "Rope anchor in good working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "rowing-machines-in-good-working-order-21",
+          "label": "Rowing machines in good working order?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "number-22",
+          "label": "Number",
+          "type": "number",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "squat-racks-in-good-working-order-23",
+          "label": "Squat racks in good working order?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "number-24",
+          "label": "Number",
+          "type": "number",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "steppers-in-good-working-order-25",
+          "label": "Steppers in good working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "weights-2-5kg-in-good-working-order-26",
+          "label": "Weights - 2,5kg in good working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "weights-5kg-in-good-working-order-27",
+          "label": "Weights - 5kg in good working order?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "number-28",
+          "label": "Number",
+          "type": "number",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "weights-7-5kg-in-good-working-order-29",
+          "label": "Weights - 7,5kg in good working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "weights-10kg-in-good-working-order-30",
+          "label": "Weights - 10kg in good working order?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "number-31",
+          "label": "Number",
+          "type": "number",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "weights-12-5kg-in-good-working-order-32",
+          "label": "Weights - 12,5kg in good working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "weights-15kg-in-good-working-order-33",
+          "label": "Weights - 15kg in good working order?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "number-34",
+          "label": "Number",
+          "type": "number",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "weights-17-5kg-in-good-working-order-35",
+          "label": "Weights - 17,5kg in good working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "weights-20kg-in-good-working-order-36",
+          "label": "Weights - 20kg in good working order?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "number-37",
+          "label": "Number",
+          "type": "number",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "weights-22-5kg-in-good-working-order-38",
+          "label": "Weights - 22,5kg in good working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "weights-25kg-in-good-working-order-39",
+          "label": "Weights - 25kg in good working order?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "last-service-date-of-equipment-40",
+          "label": "Last service date of equipment?",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "soccer-diagram-visible-41",
+          "label": "Soccer diagram visible ?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "soccer-net-in-a-workable-condition-42",
+          "label": "Soccer Net in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "artificial-grass-condition-43",
+          "label": "Artificial grass condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "netball-diagram-visible-44",
+          "label": "Netball diagram visible ?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "netball-ring-in-a-workable-condition-45",
+          "label": "Netball ring in a workable condition ?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "park-steel-outdoor-fitness-equipment-in-good-wor-46",
+          "label": "Park steel outdoor fitness equipment in good working condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "landscaping",
+      "title": "Landscaping",
+      "sourceFile": "BuildingcheckLandscaping_APEX_CL26004732_27Sep26_121400.pdf",
+      "questions": [
+        {
+          "id": "gardens-and-bedding-in-good-condition-1",
+          "label": "Gardens and Bedding in good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "grass-in-good-condition-2",
+          "label": "Grass in good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "irrigation-system-in-a-workable-condition-3",
+          "label": "Irrigation system in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "trees-and-plants-in-good-condition-4",
+          "label": "Trees and Plants in good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "indoor-plants-well-maintained-5",
+          "label": "Indoor plants well maintained?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "how-frequently-are-the-gardens-serviced-6",
+          "label": "How frequently are the gardens serviced?",
+          "type": "text",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "hose-pipes-on-site-7",
+          "label": "Hose pipes on site?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "lawn-mower-8",
+          "label": "Lawn mower?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "pruning-shears-9",
+          "label": "Pruning shears?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "shovel-10",
+          "label": "Shovel ?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "water-can-11",
+          "label": "Water can?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "edge-trimmer-12",
+          "label": "Edge trimmer?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "garden-fork-13",
+          "label": "Garden fork?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "wheelbarrow-14",
+          "label": "Wheelbarrow?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "pest-control-fumigation",
+      "title": "Pest control & Fumigation",
+      "sourceFile": "BuildingcheckPestcontrolFumigation_APEX_CL26004733_27Sep26_121600.pdf",
+      "questions": [
+        {
+          "id": "fumigation-sla-in-place-1",
+          "label": "Fumigation SLA in place?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "service-provider-2",
+          "label": "Service provider",
+          "type": "text",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "slas-expiry-date-3",
+          "label": "SLAs expiry date",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "bait-station-sla-in-place-4",
+          "label": "Bait station SLA in place?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "service-provider-5",
+          "label": "Service provider",
+          "type": "text",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "slas-expiry-date-6",
+          "label": "SLAs expiry date",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-bait-stations-on-site-7",
+          "label": "How many bait stations on site?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "last-date-of-fumigation-8",
+          "label": "Last date of fumigation ?",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "next-date-of-fumigation-9",
+          "label": "Next date of fumigation?",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "last-date-of-bait-station-service-10",
+          "label": "Last date of bait station service?",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "next-date-of-bait-station-service-11",
+          "label": "Next date of bait station service?",
+          "type": "date",
+          "photo": false,
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "plumbing",
+      "title": "Plumbing",
+      "sourceFile": "BuildingcheckPlumbing_APEX_CL26004734_27Sep26_121900.pdf",
+      "questions": [
+        {
+          "id": "check-plumbing-ducts-on-each-passage-1",
+          "label": "Check plumbing ducts on each passage?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "drains-blocked-2",
+          "label": "Drains blocked?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "jet-cleaning-of-full-bores-service-date-3",
+          "label": "Jet cleaning of full bores service date?",
+          "type": "date",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "pluvia-system-service-date-4",
+          "label": "Pluvia system service date?",
+          "type": "date",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "storm-water-drainage-inspected-5",
+          "label": "Storm water drainage inspected?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "refuse-area",
+      "title": "Refuse Area",
+      "sourceFile": "BuildingcheckRefuseArea_APEX_CL26004735_27Sep26_122200.pdf",
+      "questions": [
+        {
+          "id": "waste-management-sla-in-place-1",
+          "label": "Waste management SLA in place?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "sla-expiry-date-2",
+          "label": "SLA expiry date",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "waste-management-service-provider-3",
+          "label": "Waste Management Service Provider?",
+          "type": "text",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-frequently-do-they-collect-per-week-4",
+          "label": "How frequently do they collect per week?",
+          "type": "text",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "was-there-bins-broken-during-the-month-5",
+          "label": "Was there bins broken during the month?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-6",
+          "label": "How many?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "was-it-replaced-7",
+          "label": "Was it replaced?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-bins-on-site-8",
+          "label": "How many bins on site?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "roof",
+      "title": "Roof",
+      "sourceFile": "BuildingcheckRoof_APEX_CL26004736_27Sep26_123400.pdf",
+      "questions": [
+        {
+          "id": "flashings-in-good-order-1",
+          "label": "Flashings in good order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "gutters-and-down-pipes-last-service-date-2",
+          "label": "Gutters and down pipes last service date",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "parapet-walls-in-good-order-3",
+          "label": "Parapet walls in good order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "roof-ventilators-in-good-working-condition-4",
+          "label": "Roof ventilators in good working condition?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "skylights-in-good-working-condition-5",
+          "label": "Skylights in good working condition?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "type-of-roof-6",
+          "label": "Type of Roof?",
+          "type": "text",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "verges-in-good-order-7",
+          "label": "Verges in good order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "waterproof-guarantee-in-place-8",
+          "label": "Waterproof guarantee in place?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "waterproof-maintenance-due-date-9",
+          "label": "Waterproof maintenance due date",
+          "type": "date",
+          "photo": false,
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "security",
+      "title": "Security",
+      "sourceFile": "BuildingcheckSecurity_APEX_CL26004737_27Sep26_123900.pdf",
+      "questions": [
+        {
+          "id": "security-provider-sla-in-place-1",
+          "label": "Security provider SLA in place?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "service-provider-2",
+          "label": "Service provider",
+          "type": "text",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "sla-expiry-date-3",
+          "label": "SLA expiry date",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "security-monthly-meeting-date-4",
+          "label": "Security monthly meeting date?",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "security-monthly-meeting-minutes-submitted-5",
+          "label": "Security monthly meeting minutes submitted",
+          "type": "text",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "student-life-debtors-managers-included-in-the-me-6",
+          "label": "Student Life & Debtors Managers included in the meeting?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-day-guards-7",
+          "label": "How many day guards?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-night-guards-8",
+          "label": "How many night guards",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-guard-during-weekends-public-holidays-9",
+          "label": "How many guard during weekends & public holidays?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "all-guards-dress-in-uniform-10",
+          "label": "All guards dress in uniform?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "ob-book-checked-and-signed-11",
+          "label": "OB Book checked and signed?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "security-desk-neat-tidy-clean-12",
+          "label": "Security desk neat, tidy & clean?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "security-equipment-in-a-working-condition-13",
+          "label": "Security equipment in a working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "security-guard-house-neat-tidy-clean-14",
+          "label": "Security guard house neat, tidy & clean?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "security-toilet-clean-15",
+          "label": "Security toilet clean?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "signage",
+      "title": "Signage",
+      "sourceFile": "BuildingcheckSignage_APEX_CL26004738_27Sep26_124200.pdf",
+      "questions": [
+        {
+          "id": "all-disclaimer-boards-visible-1",
+          "label": "All disclaimer boards visible?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "evacuation-signage-in-a-good-condition-2",
+          "label": "Evacuation signage in a good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "external-signage-in-a-good-condition-3",
+          "label": "External signage in a good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "fire-signage-visible-4",
+          "label": "Fire signage visible?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "internal-signage-in-a-good-condition-5",
+          "label": "Internal signage in a good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "structure",
+      "title": "Structure",
+      "sourceFile": "BuildingcheckStructure_APEX_CL26004739_27Sep26_124400.pdf",
+      "questions": [
+        {
+          "id": "basement-clean-1",
+          "label": "Basement clean?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "bollards-in-good-working-order-2",
+          "label": "Bollards in good working order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "concrete-slabs-in-good-condition-3",
+          "label": "Concrete slabs in good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "curbs-in-good-order-4",
+          "label": "Curbs in good order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "fencing-boundary-walls-in-good-order-5",
+          "label": "Fencing / boundary walls in good order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "wall-structure-in-good-condition-6",
+          "label": "Wall structure in good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "student-laundry-room",
+      "title": "Student Laundry Room",
+      "sourceFile": "BuildingcheckStudentLaundryRoom_APEX_CL26004740_27Sep26_125800.pdf",
+      "questions": [
+        {
+          "id": "washers-in-good-working-order-1",
+          "label": "Washers in good working order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "maytag-washer-brands-on-site-2",
+          "label": "Maytag washer brands on site?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "speed-queen-washer-brands-on-site-3",
+          "label": "Speed Queen washer brands on site?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "dryers-in-good-working-order-4",
+          "label": "Dryers in good working order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "speed-queen-dryer-brands-on-site-5",
+          "label": "Speed Queen dryer brands on site?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "maytag-dryer-brands-on-site-6",
+          "label": "Maytag dryer brands on site?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "are-all-machines-labelled-7",
+          "label": "Are all machines labelled?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "last-service-date-8",
+          "label": "Last service date?",
+          "type": "date",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "wash-basins-in-good-working-order-9",
+          "label": "Wash basins in good working order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "number-of-wash-basins-10",
+          "label": "Number of wash basins",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "modems-in-good-working-order-11",
+          "label": "Modems in good working order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "number-of-modems-12",
+          "label": "Number of modems",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "indoor-drying-laundry-stand-in-good-order-13",
+          "label": "Indoor drying laundry stand in good order?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "number-of-laundry-stands-14",
+          "label": "Number of laundry stands",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "ironing-boards-in-good-order-15",
+          "label": "Ironing boards in good order?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "number-of-ironing-boards-16",
+          "label": "Number of ironing boards",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "daily-filter-cleaning-done-17",
+          "label": "Daily filter cleaning done?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "extractor-fans-in-a-good-conditions-18",
+          "label": "Extractor fans in a good conditions?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "how-many-lost-laundry-cards-was-replaced-for-the-19",
+          "label": "How many lost laundry cards was replaced for the month?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "student-unit-numbers-of-lost-laundry-cards-20",
+          "label": "Student unit numbers of lost laundry cards?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "was-it-charged-to-the-account-21",
+          "label": "Was it charged to the account?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "are-ther-washers-in-the-basement-22",
+          "label": "Are ther washers in the basement?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "number-of-washers-in-the-basement-23",
+          "label": "Number of washers in the basement",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "are-ther-dryers-in-the-basement-24",
+          "label": "Are ther dryers in the basement?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "number-of-dryers-in-the-basement-25",
+          "label": "Number of dryers in the basement",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "cleaning-register-signed-and-updated-26",
+          "label": "Cleaning register signed and updated?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "laundry-posters-visible-neat-and-updated-27",
+          "label": "Laundry posters visible, neat and updated?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "decoder-in-a-workable-condition-28",
+          "label": "Decoder in a workable condition?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "tv-s-in-a-workable-condition-29",
+          "label": "TV`s in a workable condition?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "washing-lines-in-a-workable-condition-30",
+          "label": "Washing lines in a workable condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "student-pc-lab",
+      "title": "Student PC Lab",
+      "sourceFile": "BuildingCheckStudentPCLab_APEX_CL26004726_27Sep26_040200.pdf",
+      "questions": [
+        {
+          "id": "aircon-in-a-workable-condition-1",
+          "label": "Aircon in a workable condition?",
+          "type": "pass-fail-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "any-broken-equipment-2",
+          "label": "Any broken equipment?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "bibo-in-a-workable-condition-3",
+          "label": "Bibo in a workable condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "blinds-in-a-good-condition-4",
+          "label": "Blinds in a good condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "carpets-in-a-good-condition-5",
+          "label": "Carpets in a good condition?",
+          "type": "pass-fail-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "chairs-on-site-6",
+          "label": "Chairs on site?",
+          "type": "pass-fail-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "cleaning-register-signed-and-updated-7",
+          "label": "Cleaning register signed and updated?",
+          "type": "pass-fail-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "hdmi-cables-8",
+          "label": "HDMI cables?",
+          "type": "pass-fail-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-bins-in-the-room-9",
+          "label": "How many bins in the room?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-computer-boxes-10",
+          "label": "How many computer boxes?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-computer-keyboards-11",
+          "label": "How many computer keyboards?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-workable-computer-mouses-12",
+          "label": "How many workable computer mouses?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "how-many-workable-desk-computers-13",
+          "label": "How many workable desk computers?",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "light-bulbs-in-a-workable-condition-14",
+          "label": "Light bulbs in a workable condition?",
+          "type": "pass-fail-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "sufficient-plugs-15",
+          "label": "Sufficient plugs?",
+          "type": "pass-fail-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "tables-on-site-16",
+          "label": "Tables on site?",
+          "type": "pass-fail-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "white-board-on-site-17",
+          "label": "White board on site?",
+          "type": "pass-fail-na",
+          "photo": false,
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "student-study-room",
+      "title": "Student Study Room",
+      "sourceFile": "BuildingcheckStudentStudyRoom_APEX_CL26004741_27Sep26_130300.pdf",
+      "questions": [
+        {
+          "id": "aircon-in-a-workable-condition-1",
+          "label": "Aircon in a workable condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "any-broken-equipment-2",
+          "label": "Any broken equipment?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "bean-bags-in-good-condition-3",
+          "label": "Bean Bags in good condition?",
+          "type": "yes-no",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "bibo-in-a-workable-condition-4",
+          "label": "Bibo in a workable condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "blinds-in-a-good-condition-5",
+          "label": "Blinds in a good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "carpets-in-a-good-condition-6",
+          "label": "Carpets in a good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "tables-in-working-condition-7",
+          "label": "Tables in working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "number-of-tables-8",
+          "label": "Number of tables",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "chairs-in-working-condition-9",
+          "label": "Chairs in working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "number-of-chairs-10",
+          "label": "Number of chairs",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "desk-dividers-in-good-condition-11",
+          "label": "Desk dividers in good condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "number-of-desk-dividers-12",
+          "label": "Number of desk dividers",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "bins-in-working-condition-13",
+          "label": "Bins in working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "number-of-bins-14",
+          "label": "Number of bins",
+          "type": "number",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "light-bulbs-in-a-working-condition-15",
+          "label": "Light bulbs in a working condition?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "sufficient-plugs-16",
+          "label": "Sufficient plugs?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        },
+        {
+          "id": "white-board-in-working-condition-17",
+          "label": "White board in working condition?",
+          "type": "yes-no-na",
+          "photo": false,
+          "required": false
+        },
+        {
+          "id": "cleaning-register-signed-and-updated-18",
+          "label": "Cleaning register signed and updated?",
+          "type": "yes-no",
+          "photo": true,
+          "required": false
+        }
+      ]
+    }
+  ]
+}

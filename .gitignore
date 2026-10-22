@@ -1,6 +1,9 @@
 node_modules/
 android/
 dist/
+.env
+.env.*
+!.env.example
 www/assets/
 www/app.bundle.js
 __pycache__/

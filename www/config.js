@@ -1,3 +1,9 @@
 window.APP_CONFIG = {
-  clientId: ""
+  apiBaseUrl: "",
+  clientId: "",
+  integrations: {
+    myBuildings: {
+      enabled: false
+    }
+  }
 };

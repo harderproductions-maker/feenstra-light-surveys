@@ -4,22 +4,41 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#f1f3ec" />
-    <title>Feenstra Light Surveys</title>
+    <meta name="referrer" content="no-referrer" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' https: http://localhost:* http://127.0.0.1:* capacitor://localhost; form-action 'self'" />
+    <title>Feenstra Building And OHS</title>
     <link rel="stylesheet" href="styles.css" />
     <script src="config.js"></script>
     <script type="module" src="app.bundle.js"></script>
   </head>
   <body>
-    <header class="topbar">
-      <a class="brand" href="#" aria-label="Feenstra Light Surveys home">
+    <main id="auth-screen" class="auth-screen">
+      <form id="login-form" class="auth-card">
         <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
-        <span>FEENSTRA <strong>LIGHT SURVEYS</strong></span>
+        <p class="eyebrow">FEENSTRA BUILDING AND OHS</p>
+        <h1>Sign in to your workspace</h1>
+        <p class="auth-description">Your surveys, building checks, photos, and reports sync to your team's shared workspace.</p>
+        <label>Email<input name="email" type="email" autocomplete="username" required /></label>
+        <label>Password<input name="password" type="password" autocomplete="current-password" required /></label>
+        <p id="login-error" class="auth-error" role="alert" hidden></p>
+        <button class="button primary" type="submit">Sign in</button>
+        <p class="auth-footnote">Accounts are provided by your workspace administrator.</p>
+      </form>
+    </main>
+    <div id="app-shell" hidden>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Feenstra Building And OHS home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>FEENSTRA <strong>BUILDING AND OHS</strong></span>
       </a>
       <div class="topbar-actions">
+        <button class="button secondary theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode" aria-pressed="false"><span data-theme-icon aria-hidden="true">☾</span><span data-theme-label>Dark mode</span></button>
         <button class="button secondary" id="back-button" type="button" hidden>← Back</button>
         <button class="button secondary" id="home-button" type="button">Home</button>
+        <button class="button secondary" id="account-button" type="button">Account</button>
+        <button class="button secondary" id="signout-button" type="button">Sign out</button>
       </div>
-      <span class="offline-indicator"><span></span> LOCAL WORKSPACE</span>
+      <span id="sync-status" class="offline-indicator" role="status" aria-live="polite"><span></span> SYNCING</span>
     </header>
 
     <main class="layout">
@@ -41,7 +60,7 @@
           <input id="project-import-input" type="file" accept="application/json,.json" hidden />
         </div>
         <div id="survey-list" class="survey-list" aria-label="Saved surveys"></div>
-        <div class="rail-footnote"><span class="storage-dot"></span> Saved on this device</div>
+        <div class="rail-footnote"><span class="storage-dot"></span> Shared workspace · offline-ready</div>
       </aside>
 
       <section class="workspace" id="workspace" aria-live="polite"></section>
@@ -56,7 +75,7 @@
           </div>
           <button class="icon-button quiet" type="button" id="close-dialog" aria-label="Close">×</button>
         </div>
-        <label>Building Name<input name="buildingName" maxlength="100" placeholder="e.g. North workshop" required /></label>
+        <label>Building<select name="propertyId" required></select></label>
         <label>Inspector Name<input name="inspectorName" maxlength="100" placeholder="Full name" required /></label>
         <label>Inspection date<input name="inspectionDate" type="date" required /></label>
         <div class="dialog-actions">
@@ -64,6 +83,32 @@
           <button class="button primary" id="survey-dialog-submit" type="submit">Create project →</button>
         </div>
       </form>
+    </dialog>
+    <dialog id="account-dialog" class="survey-dialog account-dialog">
+      <div class="dialog-heading">
+        <div><p class="eyebrow">SHARED WORKSPACE</p><h2 id="account-dialog-title">Account</h2></div>
+        <button class="icon-button quiet" type="button" id="close-account-dialog" aria-label="Close">×</button>
+      </div>
+      <p id="account-summary" class="dialog-note"></p>
+      <section id="user-management" hidden>
+        <h3>Manage accounts</h3>
+        <form id="create-property-form" class="account-create-form">
+          <label>Building name<input name="name" maxlength="120" required /></label>
+          <label>City<input name="city" maxlength="120" /></label>
+          <button class="button secondary" type="submit">Add building</button>
+        </form>
+        <p id="property-management-status" class="account-status" role="status" aria-live="polite"></p>
+        <form id="create-user-form" class="account-create-form">
+          <label>Name<input name="name" maxlength="100" required /></label>
+          <label>Email<input name="email" type="email" required /></label>
+          <label>Temporary password<input name="password" type="password" minlength="12" autocomplete="new-password" required /></label>
+          <label>Allowed buildings<select name="propertyIds" multiple size="5" required></select></label>
+          <button class="button primary" type="submit">Create user</button>
+        </form>
+        <p id="user-management-status" class="account-status" role="status" aria-live="polite"></p>
+        <ul id="user-list" class="user-list"></ul>
+      </section>
+      <div class="dialog-actions"><button class="button secondary" type="button" id="close-account-dialog-footer">Close</button></div>
     </dialog>
     <dialog id="photo-dialog" class="survey-dialog">
       <form id="photo-form">
@@ -107,21 +152,49 @@
         <button class="icon-button quiet" type="button" id="close-report-preview" aria-label="Close">×</button>
       </div>
       <iframe id="saved-report-frame" title="Saved OHS report preview" sandbox=""></iframe>
+      <section class="report-photo-tools" id="report-photo-tools" aria-label="Copy photos from this report" hidden>
+        <div class="report-photo-tools-heading"><strong>Copy report photos</strong><span>Select a photo to copy it for pasting elsewhere.</span></div>
+        <div class="report-photo-list" id="report-photo-list"></div>
+        <p id="report-photo-status" class="report-photo-status" role="status" aria-live="polite"></p>
+      </section>
       <div class="dialog-actions"><button class="button secondary" type="button" id="close-report-preview-footer">Close</button></div>
     </dialog>
     <dialog id="check-import-dialog" class="survey-dialog">
       <form id="check-import-form">
         <div class="dialog-heading">
-          <div><p class="eyebrow">BUILDING CHECKS</p><h2>Import check list</h2></div>
+          <div><p class="eyebrow">BUILDING CHECKS</p><h2>Create checklist from a file</h2></div>
           <button class="icon-button quiet" type="button" id="close-check-import" aria-label="Close">×</button>
         </div>
-        <label>Building Name<input name="buildingName" maxlength="100" required /></label>
+        <input name="propertyId" type="hidden" />
+        <input name="buildingName" type="hidden" />
         <label>Inspector Name<input name="inspectorName" maxlength="100" required /></label>
-        <label>Check list file<input name="checksFile" type="file" accept=".csv,.xlsx" required /></label>
-        <p class="dialog-note">CSV and Excel (.xlsx) files are supported. Include a check/item/name column. Optional columns include location/area, description, category, reference/standard, condition, and severity.</p>
+        <label>Imported by<input name="changedBy" maxlength="100" required /></label>
+        <label>Inspection date<input name="inspectionDate" type="date" required /></label>
+        <label>Checklist source<input name="checksFile" type="file" accept=".csv,.xlsx,.pdf,application/pdf" required /></label>
+        <p class="dialog-note">Choose a CSV or Excel checklist, or a text/scanned PDF. PDF text and images are processed on this device to suggest checklist items. The PDF itself is not saved.</p>
+        <output id="check-import-status" class="check-import-status" aria-live="polite"></output>
         <div class="dialog-actions">
           <button class="button secondary" type="button" id="cancel-check-import">Cancel</button>
           <button class="button primary" type="submit">Import checks</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="check-project-dialog" class="survey-dialog">
+      <form id="check-project-form">
+        <div class="dialog-heading">
+          <div><p class="eyebrow">BUILDING CHECKS</p><h2>Create checklist</h2></div>
+          <button class="icon-button quiet" type="button" id="close-check-project" aria-label="Close">×</button>
+        </div>
+        <label>Building Name<input name="buildingName" maxlength="100" required /></label>
+        <label>Inspector Name<input name="inspectorName" maxlength="100" required /></label>
+        <label>Inspection date<input name="inspectionDate" type="date" required /></label>
+        <label>Created by<input name="createdBy" maxlength="100" required /></label>
+        <div class="manual-check-heading"><h3>Checklist items</h3><button class="button subtle" id="add-manual-check" type="button">＋ Add item</button></div>
+        <div id="manual-check-list" class="manual-check-list"></div>
+        <p class="dialog-note">Each item starts as Not assessed. Open it later to select Good, Needs attention, or Bad, add notes and attach photos.</p>
+        <div class="dialog-actions">
+          <button class="button secondary" type="button" id="cancel-check-project">Cancel</button>
+          <button class="button primary" type="submit">Create checklist</button>
         </div>
       </form>
     </dialog>
@@ -131,6 +204,11 @@
           <div><p class="eyebrow">BUILDING CHECK UPDATE</p><h2 id="check-update-title">Update check</h2></div>
           <button class="icon-button quiet" type="button" id="close-check-update" aria-label="Close">×</button>
         </div>
+        <label>Check name<input name="title" maxlength="120" required /></label>
+        <label>Location / area<input name="location" maxlength="120" /></label>
+        <label>Description<textarea name="description" maxlength="1000" rows="2"></textarea></label>
+        <label>Reference / standard<input name="reference" maxlength="200" /></label>
+        <label>Changed by<input name="changedBy" maxlength="100" required /></label>
         <label>Status
           <select name="status" required>
             <option value="open">Open</option><option value="in-progress">In progress</option>
@@ -140,7 +218,7 @@
         <label>Condition
           <select name="condition" required>
             <option value="not-assessed">Not assessed</option><option value="good">Good</option>
-            <option value="fair">Fair</option><option value="poor">Poor</option><option value="critical">Critical</option>
+            <option value="needs-attention">Needs attention</option><option value="bad">Bad</option>
           </select>
         </label>
         <label>Severity
@@ -157,6 +235,15 @@
         </div>
       </form>
     </dialog>
+    <template id="manual-check-row-template">
+      <fieldset class="manual-check-row">
+        <div class="manual-check-row-heading"><strong>Check item</strong><button class="text-button" type="button" data-remove-manual-check>Remove</button></div>
+        <label>Check name<input name="title" maxlength="120" required /></label>
+        <label>Location / area<input name="location" maxlength="120" /></label>
+        <label>Description<textarea name="description" maxlength="1000" rows="2"></textarea></label>
+      </fieldset>
+    </template>
     <input id="photo-input" type="file" accept="image/*" capture="environment" hidden />
+    </div>
   </body>
 </html>
