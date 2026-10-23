@@ -12,7 +12,7 @@
     "appId": "com.feenstra.buildingohs.desktop",
     "productName": "Feenstra Building and OHS",
     "directories": { "output": "dist" },
-    "files": ["main.cjs", "settings.html", "preload.cjs", "www/**/*"],
+    "files": ["main.cjs", "settings.html", "preload.cjs", "preload-app.cjs", "www/**/*"],
     "win": { "signAndEditExecutable": false },
     "artifactName": "Feenstra-Building-And-OHS-Windows-${version}.${ext}"
   },

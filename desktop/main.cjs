@@ -1,5 +1,6 @@
-const { app, BrowserWindow, Menu, ipcMain, net, protocol } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, net, protocol, shell } = require('electron');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const { pathToFileURL } = require('url');
 
@@ -51,7 +52,12 @@ function createMainWindow() {
     width: 1280,
     height: 860,
     title: 'Feenstra Building and OHS',
-    webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true }
+    webPreferences: {
+      preload: path.join(__dirname, 'preload-app.cjs'),
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: true
+    }
   });
   mainWindow.loadURL('feenstra://app/index.html');
   mainWindow.on('closed', () => { mainWindow = null; });
@@ -79,6 +85,61 @@ function openSettings() {
   settingsWindow.on('closed', () => { settingsWindow = null; });
 }
 
+const reportsRoot = () => path.join(app.getPath('documents'), 'Feenstra Reports');
+
+// Makes a value safe as a single Windows folder or file name.
+function safeSegment(value, fallback) {
+  let name = String(value || '')
+    .replace(/[<>:"/\\|?*\u0000-\u001f]/g, '-')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/[. ]+$/, '')
+    .slice(0, 80)
+    .trim();
+  if (/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\..*)?$/i.test(name)) name = `_${name}`;
+  return name || fallback;
+}
+
+function uniquePath(dir, base) {
+  let candidate = path.join(dir, `${base}.pdf`);
+  for (let n = 2; fs.existsSync(candidate); n += 1) candidate = path.join(dir, `${base} (${n}).pdf`);
+  return candidate;
+}
+
+async function renderPdf(html) {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'feenstra-report-'));
+  const tempFile = path.join(tempDir, 'report.html');
+  fs.writeFileSync(tempFile, html);
+  const printWindow = new BrowserWindow({
+    show: false,
+    webPreferences: { javascript: false, sandbox: true, contextIsolation: true, nodeIntegration: false }
+  });
+  try {
+    await printWindow.loadFile(tempFile);
+    return await printWindow.webContents.printToPDF({ printBackground: true, preferCSSPageSize: true });
+  } finally {
+    printWindow.destroy();
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+}
+
+ipcMain.handle('reports:save', async (event, report) => {
+  if (event.sender !== mainWindow?.webContents) return { error: 'Not allowed.' };
+  try {
+    if (typeof report?.html !== 'string' || !report.html) throw new Error('The report is empty.');
+    const date = /^\d{4}-\d{2}-\d{2}$/.test(report.date) ? report.date : new Date().toISOString().slice(0, 10);
+    const kind = safeSegment(report.kind, 'Report');
+    const revision = Number(report.revision) > 1 ? ` (revision ${Math.floor(Number(report.revision))})` : '';
+    const dir = path.join(reportsRoot(), safeSegment(report.building, 'Unassigned building'), kind);
+    fs.mkdirSync(dir, { recursive: true });
+    const file = uniquePath(dir, `${date} - ${kind}${revision}`);
+    fs.writeFileSync(file, await renderPdf(report.html));
+    return { ok: true, path: file };
+  } catch (error) {
+    return { error: `Could not save the report: ${error.message}` };
+  }
+});
+
 ipcMain.handle('settings:get', (event) => {
   if (event.sender !== settingsWindow?.webContents) return null;
   return { serverUrl: readServerUrl() };
@@ -99,7 +160,12 @@ ipcMain.handle('settings:save', (event, value) => {
 app.whenReady().then(() => {
   protocol.handle('feenstra', serveApp);
   Menu.setApplicationMenu(Menu.buildFromTemplate([
-    { label: 'File', submenu: [{ label: 'Server address…', click: openSettings }, { type: 'separator' }, { role: 'quit' }] },
+    { label: 'File', submenu: [
+      { label: 'Open reports folder', click: () => { fs.mkdirSync(reportsRoot(), { recursive: true }); shell.openPath(reportsRoot()); } },
+      { label: 'Server address…', click: openSettings },
+      { type: 'separator' },
+      { role: 'quit' }
+    ] },
     { role: 'viewMenu' }
   ]));
   createMainWindow();

@@ -44,6 +44,7 @@ let state = {
   sensorCalibration: initialCalibration
 };
 let currentView = 'home';
+const userManagementSection = document.querySelector('#user-management');
 let activeCheckProjectId = null;
 let activeCheckId = null;
 let activeCheckFilter = null;
@@ -197,7 +198,7 @@ function showSignedIn(user) {
   document.querySelector('#auth-screen').hidden = true;
   document.querySelector('#app-shell').hidden = false;
   document.querySelector('#account-summary').textContent = `${user.name} · ${user.email} · ${user.role === 'admin' ? 'Administrator' : 'Building access'}`;
-  document.querySelector('#user-management').hidden = user.role !== 'admin';
+  document.querySelector('#users-nav').hidden = user.role !== 'admin';
   render();
 }
 
@@ -209,6 +210,30 @@ function showSignIn(message = '') {
   error.hidden = !message;
 }
 
+document.addEventListener('click', (event) => {
+  const toggle = event.target.closest('[data-toggle-buildings]');
+  if (!toggle) return;
+  const boxes = [...toggle.closest('.building-picker').querySelectorAll('input[type="checkbox"]')];
+  const selectAll = boxes.some((box) => !box.checked);
+  for (const box of boxes) box.checked = selectAll;
+  toggle.textContent = selectAll ? 'Clear all' : 'Select all';
+});
+
+function applyUserFilter() {
+  const query = String(document.querySelector('#user-search')?.value || '').trim().toLowerCase();
+  const filter = document.querySelector('#user-filter')?.value || 'active';
+  let shown = 0;
+  const items = [...document.querySelectorAll('#user-list > li')];
+  for (const item of items) {
+    const matches = (!query || item.dataset.search.includes(query))
+      && (filter === 'all' || (filter === 'active') === (item.dataset.active === 'true'));
+    item.hidden = !matches;
+    if (matches) shown += 1;
+  }
+  const count = document.querySelector('#user-count');
+  if (count) count.textContent = `Showing ${shown} of ${items.length} users`;
+}
+
 async function loadUserManagement() {
   const status = document.querySelector('#user-management-status');
   const userList = document.querySelector('#user-list');
@@ -217,24 +242,36 @@ async function loadUserManagement() {
       apiRequest('/api/users'),
       apiRequest('/api/properties')
     ]);
-    const options = properties.map((property) => `<option value="${escapeHtml(property.id)}">${escapeHtml(property.name)}</option>`).join('');
-    document.querySelector('#create-user-form').elements.propertyIds.innerHTML = options;
-    userList.innerHTML = users.map((user) => `
-      <li>
-        <form class="managed-user-form" data-user-id="${escapeHtml(user.id)}">
-          <div class="managed-user-heading"><strong>${escapeHtml(user.name)}</strong><span>${escapeHtml(user.email)} · ${escapeHtml(user.role)}</span></div>
-          <label>Name<input name="name" maxlength="100" value="${escapeHtml(user.name)}" required ${user.role === 'admin' ? 'disabled' : ''} /></label>
-          <label>Email<input name="email" type="email" value="${escapeHtml(user.email)}" required ${user.role === 'admin' ? 'disabled' : ''} /></label>
-          <label>Allowed buildings<select name="propertyIds" multiple size="4" required ${user.role === 'admin' ? 'disabled' : ''}>${options}</select></label>
-          <label>Set new password<input name="password" type="password" minlength="12" autocomplete="new-password" ${user.role === 'admin' ? 'disabled' : ''} /></label>
-          <label class="check-label"><input type="checkbox" name="active" ${user.active ? 'checked' : ''} ${user.role === 'admin' ? 'disabled' : ''} /> Account active</label>
-          ${user.role === 'admin' ? '' : '<button class="button secondary" type="submit">Save account</button>'}
-        </form>
-      </li>`).join('');
-    for (const form of userList.querySelectorAll('.managed-user-form')) {
-      const user = users.find((item) => item.id === form.dataset.userId);
-      for (const option of form.elements.propertyIds.options) option.selected = user.property_ids.includes(option.value);
-    }
+    const buildingPicker = (selectedIds, disabled) => `<fieldset class="building-picker" ${disabled ? 'disabled' : ''}>
+      <legend>Allowed buildings</legend>
+      <button class="button secondary building-picker-toggle" type="button" data-toggle-buildings>Select all</button>
+      <div class="building-picker-list">${properties.map((property) => `<label class="check-label"><input type="checkbox" name="propertyIds" value="${escapeHtml(property.id)}" ${selectedIds.includes(property.id) ? 'checked' : ''} /> ${escapeHtml(property.name)}</label>`).join('')}</div>
+    </fieldset>`;
+    document.querySelector('#create-user-picker').innerHTML = buildingPicker([], false);
+    const propertyNames = new Map(properties.map((property) => [property.id, property.name]));
+    userList.innerHTML = users.map((user) => {
+      const buildingNames = user.role === 'admin' ? ['All buildings'] : (user.property_ids || []).map((id) => propertyNames.get(id) || id);
+      const searchText = [user.name, user.email, ...buildingNames].join(' ').toLowerCase();
+      return `
+      <li data-search="${escapeHtml(searchText)}" data-active="${user.active ? 'true' : 'false'}">
+        <details class="managed-user">
+          <summary>
+            <span class="managed-user-name"><strong>${escapeHtml(user.name)}</strong> <span>${escapeHtml(user.email)}</span></span>
+            <span class="managed-user-meta">${user.role === 'admin' ? 'Administrator' : `${buildingNames.length} building${buildingNames.length === 1 ? '' : 's'}`} · ${user.active ? 'Active' : 'Inactive'}</span>
+          </summary>
+          <form class="managed-user-form" data-user-id="${escapeHtml(user.id)}">
+            <div class="managed-user-heading"><span>${escapeHtml(buildingNames.join(', ') || 'No buildings assigned')}</span></div>
+            <label>Name<input name="name" maxlength="100" value="${escapeHtml(user.name)}" required ${user.role === 'admin' ? 'disabled' : ''} /></label>
+            <label>Username<input name="email" type="text" value="${escapeHtml(user.email)}" required ${user.role === 'admin' ? 'disabled' : ''} /></label>
+            ${buildingPicker(user.property_ids || [], user.role === 'admin')}
+            <label>Set new password<input name="password" type="password" minlength="4" autocomplete="new-password" ${user.role === 'admin' ? 'disabled' : ''} /></label>
+            <label class="check-label"><input type="checkbox" name="active" ${user.active ? 'checked' : ''} ${user.role === 'admin' ? 'disabled' : ''} /> Account active</label>
+            ${user.role === 'admin' ? '' : '<button class="button secondary" type="submit">Save account</button>'}
+          </form>
+        </details>
+      </li>`;
+    }).join('');
+    applyUserFilter();
     status.textContent = '';
   } catch (error) {
     status.textContent = error.message || 'Could not load user accounts.';
@@ -443,7 +480,6 @@ document.querySelector('#login-form').addEventListener('submit', async (event) =
 
 document.querySelector('#account-button').addEventListener('click', async () => {
   document.querySelector('#account-dialog').showModal();
-  if (currentUser?.role === 'admin') await loadUserManagement();
 });
 
 document.querySelector('#create-user-form').addEventListener('submit', async (event) => {
@@ -488,6 +524,9 @@ document.querySelector('#create-property-form').addEventListener('submit', async
     status.textContent = error.message || 'Could not add the building.';
   }
 });
+
+document.querySelector('#user-search').addEventListener('input', applyUserFilter);
+document.querySelector('#user-filter').addEventListener('change', applyUserFilter);
 
 document.querySelector('#user-list').addEventListener('submit', async (event) => {
   if (!event.target.matches('.managed-user-form')) return;
@@ -1267,7 +1306,7 @@ async function saveMonthlyTemplate(form, submitRun) {
   if (!await commit({ ...state, buildingChecks })) return;
   if (report) {
     try {
-      await downloadReport(report.html, { buildingName: report.title }, report.id);
+      await downloadReport(report.html, { buildingName: report.title }, report.id, reportMeta(project.buildingName, template?.title || project.templateTitle || 'Monthly form', report.createdAt, report.revision));
     } catch (error) {
       alertError(error, 'The monthly form was submitted and saved, but the PDF could not be exported.');
     }
@@ -1884,7 +1923,7 @@ async function saveBuildingChecklist(form, exportReport) {
   if (!form.dataset.checkFilter) navigateView('check-project', { projectId: project.id });
   if (report) {
     try {
-      await downloadReport(report.html, { buildingName: `${buildingName}-Building-Checklist` }, report.id);
+      await downloadReport(report.html, { buildingName: `${buildingName}-Building-Checklist` }, report.id, reportMeta(buildingName, 'Building checklist', report.createdAt));
     } catch (error) {
       alertError(error, 'The checklist and report revision were saved, but the report could not be exported.');
     }
@@ -2133,7 +2172,7 @@ async function exportBuildingCheckReport() {
     ? { ...item, checks: item.checks.map((child) => child.id === check.id ? updated : child) }
     : item);
   if (await commit({ ...state, buildingChecks })) {
-    await downloadReport(report.html, { buildingName: `${project.buildingName}-${check.title}` }, report.id);
+    await downloadReport(report.html, { buildingName: `${project.buildingName}-${check.title}` }, report.id, reportMeta(project.buildingName, check.title, report.createdAt));
   }
 }
 
@@ -2210,6 +2249,7 @@ function render() {
   backButton.hidden = currentView === 'home';
   homeNav.classList.toggle('active', currentView === 'home');
   lightingNav.classList.toggle('active', currentView === 'lighting');
+  document.querySelector('[data-view="users"]').classList.toggle('active', currentView === 'users');
   checksNav.classList.toggle('active', ['checks', 'property-checks', 'check-project', 'check-filter'].includes(currentView));
   surveyList.hidden = currentView !== 'lighting';
   document.querySelector('.rail-heading').hidden = currentView !== 'lighting';
@@ -2217,6 +2257,16 @@ function render() {
   document.querySelector('#import-project').hidden = currentView !== 'lighting';
   if (currentView === 'home') {
     renderHome();
+    return;
+  }
+  if (currentView === 'users') {
+    if (currentUser?.role !== 'admin') {
+      currentView = 'home';
+      renderHome();
+      return;
+    }
+    workspace.replaceChildren(userManagementSection);
+    void loadUserManagement();
     return;
   }
   if (currentView === 'checks') {
@@ -2639,7 +2689,17 @@ function safeFileName(value) {
   return value.trim().replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') || 'survey';
 }
 
-async function downloadReport(report, survey, reportId) {
+function reportMeta(building, kind, createdAt, revision) {
+  return { building, kind, date: localDateString(new Date(createdAt)), revision: revision || 1 };
+}
+
+async function downloadReport(report, survey, reportId, meta) {
+  if (window.desktopApp?.saveReportPdf && meta) {
+    const result = await window.desktopApp.saveReportPdf({ html: report, ...meta });
+    if (result?.error) throw new Error(result.error);
+    window.alert(`Report saved to:\n${result.path}`);
+    return;
+  }
   if (Capacitor.isNativePlatform()) {
     await PdfReport.create({
       html: report,
@@ -2760,14 +2820,15 @@ async function exportReport(survey) {
   try {
     const report = buildReport(survey);
     const reportId = crypto.randomUUID();
+    const reportCreatedAt = new Date().toISOString();
     const snapshot = JSON.parse(JSON.stringify({ ...survey, reports: [] }));
     const savedSurvey = {
       ...survey,
-      reports: [...survey.reports, { id: reportId, createdAt: new Date().toISOString(), html: report, projectSnapshot: snapshot }]
+      reports: [...survey.reports, { id: reportId, createdAt: reportCreatedAt, html: report, projectSnapshot: snapshot }]
     };
     const surveys = state.surveys.map((item) => item.id === survey.id ? savedSurvey : item);
     if (!await commit({ ...state, surveys })) return;
-    await downloadReport(report, survey, reportId);
+    await downloadReport(report, survey, reportId, reportMeta(survey.buildingName, 'Lighting survey', reportCreatedAt));
   } catch (error) {
     alertError(error, 'Could not export the OHS report.');
   }
@@ -2974,7 +3035,7 @@ workspace.addEventListener('click', async (event) => {
       openSavedReportPreview(report.html, report.title || `Building checklist report · ${formatDateTime(report.createdAt)}`);
     } else {
       try {
-        await downloadReport(report.html, { buildingName: report.title || `${project.buildingName}-Building-Checklist` }, report.id);
+        await downloadReport(report.html, { buildingName: report.title || `${project.buildingName}-Building-Checklist` }, report.id, reportMeta(project.buildingName, project.templateTitle || 'Building checklist', report.createdAt, report.revision));
       } catch (error) {
         alertError(error, 'Could not export the saved building checklist report.');
       }
@@ -2994,7 +3055,7 @@ workspace.addEventListener('click', async (event) => {
       openSavedReportPreview(report.html, `Building check report · ${formatDateTime(report.createdAt)}`);
     } else {
       try {
-        await downloadReport(report.html, { buildingName: `${project.buildingName}-${report.checkTitle || check.title}` }, report.id);
+        await downloadReport(report.html, { buildingName: `${project.buildingName}-${report.checkTitle || check.title}` }, report.id, reportMeta(project.buildingName, report.checkTitle || check.title, report.createdAt));
       } catch (error) {
         alertError(error, 'Could not export the saved building-check report.');
       }
@@ -3128,7 +3189,7 @@ document.querySelector('#theme-toggle').addEventListener('click', () => {
 document.querySelector('#home-button').addEventListener('click', () => navigateView('home'));
 document.querySelector('#back-button').addEventListener('click', () => history.back());
 window.addEventListener('popstate', (event) => {
-  currentView = ['home', 'lighting', 'checks', 'property-checks', 'check-project', 'check-filter'].includes(event.state?.view)
+  currentView = ['home', 'lighting', 'checks', 'users', 'property-checks', 'check-project', 'check-filter'].includes(event.state?.view)
     ? event.state.view
     : 'home';
   activeCheckProjectId = event.state?.projectId || null;
@@ -3189,7 +3250,7 @@ reportsDialog.addEventListener('click', async (event) => {
     openSavedReportPreview(report.html, `Saved report · ${formatDateTime(report.createdAt)}`);
   } else if (button.dataset.reportAction === 'download') {
     try {
-      await downloadReport(report.html, survey, report.id);
+      await downloadReport(report.html, survey, report.id, reportMeta(survey.buildingName, 'Lighting survey', report.createdAt));
     } catch (error) {
       alertError(error, 'Could not export the saved report.');
     }
@@ -3375,10 +3436,11 @@ workspace.addEventListener('submit', async (event) => {
   if (await commit({ ...state, surveys })) event.target.reset();
 });
 
-document.querySelector('#manual-lux').addEventListener('input', (event) => {
-  event.currentTarget.dataset.source = 'manual';
-  event.currentTarget.dataset.sensorLux = '';
-  event.currentTarget.dataset.sensorTime = '';
+document.addEventListener('input', (event) => {
+  if (event.target.id !== 'manual-lux') return;
+  event.target.dataset.source = 'manual';
+  event.target.dataset.sensorLux = '';
+  event.target.dataset.sensorTime = '';
   document.querySelector('#reading-source').textContent = 'Manual entry (not a phone sensor reading)';
 });
 

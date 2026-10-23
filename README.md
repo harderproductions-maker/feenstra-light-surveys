@@ -30,7 +30,7 @@ On Android, choose **Export PDF report** to open Android's print screen, where t
 
 ## Install the Windows desktop app
 
-The **Build Windows desktop app** workflow publishes a Windows x64 portable ZIP to [GitHub Releases](https://github.com/harderproductions-maker/feenstra-light-surveys/releases) on pushes to `main`; it can also be started manually from the **Actions** tab. Download the ZIP from the newest release whose tag starts with `desktop-v`, extract it, and run `Feenstra Building and OHS.exe` from the extracted folder. This is a portable app, not an installer.
+The **Build Windows desktop app** workflow publishes a Windows x64 portable ZIP to [GitHub Releases](https://github.com/harderproductions-maker/feenstra-light-surveys/releases) on pushes to `main`; it can also be started manually from the **Actions** tab. Download the ZIP from the newest release whose tag starts with `desktop-v`, extract it, and run `Feenstra Building and OHS.exe` from the extracted folder. This is a portable app, not an installer. Each exported report or building check is saved automatically as a PDF under `Documents\Feenstra Reports\<Building>\<Report type>\<date> - <Report type>.pdf` (re-exports get a number, edited resubmissions show their revision). Use **File → Open reports folder** to open it.
 
 ## Building checks and repairs
 
