@@ -1,4 +1,4 @@
-# Feenstra Building And OHS
+# FG Ops
 
 Offline-first Android lighting survey app built with Capacitor 6. Each project requires a building name and inspector name and contains separately named inspection entries. Readings, notes, and photos are kept with their entry in on-device storage.
 
@@ -20,7 +20,7 @@ MyBuildings integration is reserved in `www/config.js` and disabled by default. 
 
 ## Install and update the Android app
 
-The GitHub Actions workflow builds and publishes an installable APK whenever changes reach `main`; it can also be started manually from the **Actions** tab. To get the newest build, open the repository's [latest release](https://github.com/harderproductions-maker/feenstra-light-surveys/releases/latest) on the Android device, download `Feenstra-Building-And-OHS.apk`, then open the downloaded file and confirm **Update**. Leave the existing app installed; Android keeps its locally saved projects when an update installs successfully. The same APK is available as an artifact on each successful Actions run.
+The GitHub Actions workflow builds and publishes an installable APK whenever changes reach `main`; it can also be started manually from the **Actions** tab. To get the newest build, open the repository's [latest release](https://github.com/harderproductions-maker/feenstra-light-surveys/releases/latest) on the Android device, download `FG-Ops.apk`, then open the downloaded file and confirm **Update**. Leave the existing app installed; Android keeps its locally saved projects when an update installs successfully. The same APK is available as an artifact on each successful Actions run.
 
 Android accepts an update only when the APK uses the same signing certificate and has a higher version code. This project uses a persistent Android debug signing key (alias `androiddebugkey`, passwords `android`) and refuses to publish if the key is missing or does not match the certificate already used by the APK. Keep a secure backup of the keystore; if it is lost, Android cannot install future builds over the existing app.
 
@@ -30,7 +30,7 @@ On Android, choose **Export PDF report** to open Android's print screen, where t
 
 ## Install the Windows desktop app
 
-The **Build Windows desktop app** workflow publishes a Windows x64 portable ZIP to [GitHub Releases](https://github.com/harderproductions-maker/feenstra-light-surveys/releases) on pushes to `main`; it can also be started manually from the **Actions** tab. Download the ZIP from the newest release whose tag starts with `desktop-v`, extract it, and run `Feenstra Building and OHS.exe` from the extracted folder. This is a portable app, not an installer. Each exported report or building check is saved automatically as a PDF under `Documents\Feenstra Reports\<Building>\<Report type>\<date> - <Report type>.pdf` (re-exports get a number, edited resubmissions show their revision). Use **File → Open reports folder** to open it.
+The **Build Windows desktop app** workflow publishes a Windows x64 portable ZIP to [GitHub Releases](https://github.com/harderproductions-maker/feenstra-light-surveys/releases) on pushes to `main`; it can also be started manually from the **Actions** tab. Download the ZIP from the newest release whose tag starts with `desktop-v`, extract it, and run `FG Ops.exe` from the extracted folder. This is a portable app, not an installer. Each exported report or building check is saved automatically as a PDF under `Documents\FG Ops Reports\<Building>\<Report type>\<date> - <Report type>.pdf` (re-exports get a number, edited resubmissions show their revision). Use **File → Open reports folder** to open it.
 
 ## Host the backend on your own Windows server
 

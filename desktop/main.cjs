@@ -7,6 +7,8 @@ const { pathToFileURL } = require('url');
 const defaultServerUrl = 'https://curly-palm-tree-xrv479j4xw93vp67-3001.app.github.dev';
 const wwwRoot = path.join(__dirname, 'www');
 const configPath = () => path.join(app.getPath('userData'), 'desktop-config.json');
+// Keep the profile folder used before the rename so saved sign-ins and local data are preserved.
+app.setPath('userData', path.join(app.getPath('appData'), 'Feenstra Building and OHS'));
 let mainWindow = null;
 let settingsWindow = null;
 
@@ -51,7 +53,8 @@ function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 860,
-    title: 'Feenstra Building and OHS',
+    title: 'FG Ops',
+    icon: path.join(__dirname, 'icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload-app.cjs'),
       contextIsolation: true,
@@ -73,6 +76,7 @@ function openSettings() {
     resizable: false,
     minimizable: false,
     title: 'Server address',
+    icon: path.join(__dirname, 'icon.png'),
     autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
@@ -85,7 +89,7 @@ function openSettings() {
   settingsWindow.on('closed', () => { settingsWindow = null; });
 }
 
-const reportsRoot = () => path.join(app.getPath('documents'), 'Feenstra Reports');
+const reportsRoot = () => path.join(app.getPath('documents'), 'FG Ops Reports');
 
 // Makes a value safe as a single Windows folder or file name.
 function safeSegment(value, fallback) {

@@ -126,6 +126,8 @@ def main():
     ):
         shutil.copy2(java_source / filename, java_destination / filename)
 
+    shutil.copytree(ROOT / "android-res", ROOT / "android/app/src/main/res", dirs_exist_ok=True)
+
     manifest_path = ROOT / "android/app/src/main/AndroidManifest.xml"
     if not manifest_path.is_file():
         raise FileNotFoundError(f"Android manifest not found: {manifest_path}")

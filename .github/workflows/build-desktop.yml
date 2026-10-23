@@ -41,8 +41,8 @@ jobs:
       - name: Upload desktop app artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Feenstra-Building-And-OHS-Windows
-          path: desktop/dist/Feenstra-Building-And-OHS-Windows-*.zip
+          name: FG-Ops-Windows
+          path: desktop/dist/FG-Ops-Windows-*.zip
           if-no-files-found: error
 
       - name: Publish desktop app release
@@ -52,7 +52,7 @@ jobs:
         run: |
           VERSION=$(node -p "require('./desktop/package.json').version")
           TAG="desktop-v${VERSION}-${GITHUB_RUN_NUMBER}-${GITHUB_RUN_ATTEMPT}"
-          gh release create "$TAG" "desktop/dist/Feenstra-Building-And-OHS-Windows-${VERSION}.zip" \
-            --title "Feenstra Building and OHS Desktop ${VERSION} (${GITHUB_RUN_NUMBER})" \
-            --notes "Windows x64 portable desktop app. Download and extract the ZIP, then run Feenstra Building and OHS.exe." \
+          gh release create "$TAG" "desktop/dist/FG-Ops-Windows-${VERSION}.zip" \
+            --title "FG Ops Desktop ${VERSION} (${GITHUB_RUN_NUMBER})" \
+            --notes "Windows x64 portable desktop app. Download and extract the ZIP, then run FG Ops.exe." \
             --latest=false

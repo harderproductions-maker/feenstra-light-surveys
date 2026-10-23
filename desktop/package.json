@@ -1,7 +1,7 @@
 {
   "name": "feenstra-building-and-ohs-desktop",
   "version": "1.0.0",
-  "description": "Feenstra Building and OHS desktop app",
+  "description": "FG Ops desktop app",
   "main": "main.cjs",
   "private": true,
   "scripts": {
@@ -10,11 +10,11 @@
   },
   "build": {
     "appId": "com.feenstra.buildingohs.desktop",
-    "productName": "Feenstra Building and OHS",
+    "productName": "FG Ops",
     "directories": { "output": "dist" },
-    "files": ["main.cjs", "settings.html", "preload.cjs", "preload-app.cjs", "www/**/*"],
+    "files": ["main.cjs", "settings.html", "preload.cjs", "preload-app.cjs", "icon.png", "www/**/*"],
     "win": { "signAndEditExecutable": false },
-    "artifactName": "Feenstra-Building-And-OHS-Windows-${version}.${ext}"
+    "artifactName": "FG-Ops-Windows-${version}.${ext}"
   },
   "devDependencies": {
     "electron": "^33.2.1",

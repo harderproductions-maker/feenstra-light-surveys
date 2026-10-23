@@ -73,13 +73,13 @@ function preferredTheme() {
   } catch {
     // Continue with the browser preference when local storage is unavailable.
   }
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return 'dark';
 }
 
 function applyTheme(theme, persist = true) {
   const selected = theme === 'dark' ? 'dark' : 'light';
   document.documentElement.dataset.theme = selected;
-  document.querySelector('meta[name="theme-color"]').content = selected === 'dark' ? '#111a17' : '#f1f3ec';
+  document.querySelector('meta[name="theme-color"]').content = selected === 'dark' ? '#070618' : '#f1f3ec';
   const button = document.querySelector('#theme-toggle');
   if (button) {
     const next = selected === 'dark' ? 'light' : 'dark';
@@ -908,7 +908,7 @@ function renderHome() {
   workspace.innerHTML = `
     <div class="home-view">
       ${stateLoadError ? '<p class="storage-warning" role="alert">Saved records could not be loaded in this browser. The dashboard is available, but changes will not save until browser storage is enabled.</p>' : ''}
-      <p class="eyebrow">FIELDWORK DASHBOARD · FEENSTRA BUILDING AND OHS</p>
+      <p class="eyebrow">FIELDWORK DASHBOARD · FG OPS</p>
       <div class="home-heading">
         <div><h1>Fieldwork, in focus.</h1><p class="home-intro">Choose a workspace and pick up where your site work left off.</p></div>
         <div class="home-total"><span>PROJECTS ON THIS DEVICE</span><strong>${state.surveys.length + state.buildingChecks.length}</strong><small>Lighting and building checks</small></div>
@@ -1117,7 +1117,7 @@ function buildBuildingChecklistReport(project) {
     }).join('');
     return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(template?.title || project.templateTitle)} - ${escapeHtml(project.buildingName)} - ${escapeHtml(localDateString(new Date(project.submittedAt || project.updatedAt)))}</title><style>
       *{box-sizing:border-box}body{max-width:900px;margin:30px auto;padding:0 24px;color:#192c28;font:14px/1.5 Arial,sans-serif}header{border-bottom:3px solid #355449;padding-bottom:16px}h1{font-size:27px}h2{margin:18px 0 6px}h3{font-size:12px}.meta{color:#53645b}.report-check{padding:8px 0 18px;border-bottom:1px solid #dce2d8;break-inside:avoid}figure{display:inline-block;width:30%;margin:8px 2% 12px 0;vertical-align:top}figure img{width:100%;max-height:280px;object-fit:contain}figcaption{color:#53645b}@media print{body{margin:12mm auto}}
-      </style></head><body><header><p>FEENSTRA BUILDING AND OHS · MONTHLY PROPERTY CHECK</p><h1>${escapeHtml(template?.title || project.templateTitle)}</h1><p class="meta"><strong>Property:</strong> ${escapeHtml(project.buildingName)} · <strong>City:</strong> ${escapeHtml(state.properties.find((item) => item.id === project.propertyId)?.city || '')}</p><p class="meta"><strong>Inspection date:</strong> ${escapeHtml(formatDate(project.inspectionDate))} · <strong>Inspector:</strong> ${escapeHtml(project.inspectorName)} · <strong>Submitted by:</strong> ${escapeHtml(project.submittedBy || project.lastChangedBy || 'Not recorded')}</p><p class="meta">Submitted ${escapeHtml(formatDateTime(project.submittedAt || project.updatedAt))}</p></header>${questions}</body></html>`;
+      </style></head><body><header><p>FG OPS · MONTHLY PROPERTY CHECK</p><h1>${escapeHtml(template?.title || project.templateTitle)}</h1><p class="meta"><strong>Property:</strong> ${escapeHtml(project.buildingName)} · <strong>City:</strong> ${escapeHtml(state.properties.find((item) => item.id === project.propertyId)?.city || '')}</p><p class="meta"><strong>Inspection date:</strong> ${escapeHtml(formatDate(project.inspectionDate))} · <strong>Inspector:</strong> ${escapeHtml(project.inspectorName)} · <strong>Submitted by:</strong> ${escapeHtml(project.submittedBy || project.lastChangedBy || 'Not recorded')}</p><p class="meta">Submitted ${escapeHtml(formatDateTime(project.submittedAt || project.updatedAt))}</p></header>${questions}</body></html>`;
   }
   const checks = project.checks.map((check, index) => {
     const photos = check.photos.map((photo) => `
@@ -1145,7 +1145,7 @@ function buildBuildingChecklistReport(project) {
     .meta{color:#53645b}.report-check{padding:8px 0 18px;border-bottom:1px solid #dce2d8;break-inside:avoid}
     figure{display:inline-block;width:30%;margin:8px 2% 12px 0;vertical-align:top}figure img{width:100%;max-height:280px;object-fit:contain}
     figcaption,.notes{color:#53645b;white-space:pre-wrap}ul{padding-left:20px}@media print{body{margin:12mm auto}}
-    </style></head><body><header><p>FEENSTRA BUILDING AND OHS · CHECKLIST REPORT</p>
+    </style></head><body><header><p>FG OPS · CHECKLIST REPORT</p>
     <h1>${escapeHtml(project.buildingName)}</h1><p class="meta"><strong>Inspector:</strong> ${escapeHtml(project.inspectorName)} ·
     <strong>Inspection date:</strong> ${escapeHtml(formatDate(project.inspectionDate))} ·
     <strong>Checks:</strong> ${project.checks.length}</p><p class="meta">Report generated ${escapeHtml(formatDateTime(new Date().toISOString()))}</p></header>
@@ -1401,7 +1401,7 @@ function buildCheckReport(project, check) {
     </article>`).join('');
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Building check - ${escapeHtml(check.title)}</title><style>
     *{box-sizing:border-box}body{max-width:900px;margin:30px auto;padding:0 24px;color:#192c28;font:14px/1.5 Arial,sans-serif}header{border-bottom:3px solid #355449;padding-bottom:16px}h1{font-size:27px}h2{margin-top:25px}h3{margin-bottom:5px}.meta{color:#53645b}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}.summary div{padding:12px;background:#f1f4ec;border:1px solid #dce2d8}figure{display:inline-block;width:30%;margin:8px 2% 12px 0;vertical-align:top}figure img{width:100%;max-height:280px;object-fit:contain}.history-item{border-top:1px solid #dce2d8;padding:8px 0}.notes{white-space:pre-wrap}@media print{body{margin:12mm auto}}
-    </style></head><body><header><p>FEENSTRA BUILDING AND OHS · BUILDING CONDITION RECORD</p><h1>${escapeHtml(check.title)}</h1>
+    </style></head><body><header><p>FG OPS · BUILDING CONDITION RECORD</p><h1>${escapeHtml(check.title)}</h1>
     <p class="meta"><strong>Building:</strong> ${escapeHtml(project.buildingName)} · <strong>Inspector:</strong> ${escapeHtml(project.inspectorName)}</p>
     <p class="meta"><strong>Location:</strong> ${escapeHtml(check.location || 'Not specified')} · <strong>Inspection date:</strong> ${escapeHtml(formatDate(project.inspectionDate))}</p></header>
     <section class="summary"><div><strong>Status:</strong> ${escapeHtml(statusLabel(check.status))}</div><div><strong>Condition:</strong> ${escapeHtml(conditionLabel(check.condition))}</div><div><strong>Severity:</strong> ${escapeHtml(check.severity.replaceAll('-', ' '))}</div></section>
@@ -2182,7 +2182,7 @@ async function downloadCheckTemplate() {
     ['Emergency lighting', 'North stairwell', 'Confirm emergency lighting test operation', 'Electrical', 'Site inspection schedule', 'Not assessed', 'Medium'],
     ['Handrail condition', 'Level 1 landing', 'Check fixings and surface condition', 'Access and egress', '', 'Bad', 'High']
   ].map((row) => row.map((value) => `"${value.replaceAll('"', '""')}"`).join(',')).join('\r\n');
-  const filename = 'Feenstra-Building-Checks-Template.csv';
+  const filename = 'FG-Ops-Building-Checks-Template.csv';
   if (Capacitor.isNativePlatform()) {
     const saved = await Filesystem.writeFile({ path: filename, data: sample, directory: Directory.Cache });
     await Share.share({ title: 'Building checks import template', url: saved.uri, dialogTitle: 'Save or share CSV template' });
@@ -2605,7 +2605,7 @@ async function createAnnotatedPhoto(originalData, survey, entry, reading, create
     const fontSize = Math.max(14, 20 * unit);
     const lineHeight = fontSize * 1.35;
     const lines = [
-      `FEENSTRA BUILDING AND OHS  |  ${survey.buildingName}`,
+      `FG OPS  |  ${survey.buildingName}`,
       `Entry: ${entry.name}`,
       `Captured: ${formatDateTime(createdAt)}`,
       `Recommended target: ${recommendedLux} lx`,
@@ -2674,7 +2674,7 @@ function buildReport(survey) {
 
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OHS Lighting Report - ${escapeHtml(survey.buildingName)}</title><style>
     *{box-sizing:border-box}body{max-width:1000px;margin:36px auto;padding:0 24px;color:#192c28;font:14px/1.5 Arial,sans-serif}header{display:flex;justify-content:space-between;align-items:start;border-bottom:3px solid #355449;padding-bottom:20px}h1{font-size:27px;margin:0 0 6px}h2{font-size:19px;margin:28px 0 10px}h3{font-size:14px;margin:18px 0 8px}.kicker{font-size:10px;letter-spacing:1.4px;font-weight:bold;color:#5e6e64}.meta{color:#53645b;margin:4px 0}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}.summary div{padding:13px;border:1px solid #dce2d8;background:#f7f9f4}.summary strong{display:block;font-size:20px}.summary span{font-size:11px;color:#53645b}table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:9px;border-bottom:1px solid #dce2d8;vertical-align:top}th{background:#edf1e8;font-size:10px;text-transform:uppercase}.entry{margin-top:26px;break-inside:avoid}.entry>h2{border-bottom:1px solid #dce2d8;padding-bottom:8px}.notes{color:#53645b}figure{display:inline-block;width:30%;margin:0 2% 16px 0;vertical-align:top}figure img{width:100%;max-height:280px;object-fit:contain;background:#f2f4ef}figcaption,.disclaimer{color:#53645b;font-size:11px}details img{margin-top:8px}.disclaimer{margin-top:30px;padding-top:12px;border-top:1px solid #dce2d8}@media print{body{margin:12mm auto;padding:0}.no-print{display:none}tr,figure{break-inside:avoid}}@media(max-width:600px){.summary{grid-template-columns:1fr 1fr}table{font-size:10px}th,td{padding:6px}figure{width:47%}}
-    </style></head><body><header><div><p class="kicker">FEENSTRA BUILDING AND OHS / OHS RECORD</p><h1>Lighting Survey Report</h1>
+    </style></head><body><header><div><p class="kicker">FG OPS / OHS RECORD</p><h1>Lighting Survey Report</h1>
     <p class="meta"><strong>Building:</strong> ${escapeHtml(survey.buildingName)}</p><p class="meta"><strong>Inspector:</strong> ${escapeHtml(survey.inspectorName)}</p>
     <p class="meta"><strong>Project ID:</strong> ${escapeHtml(survey.id)}</p><p class="meta"><strong>Inspection date:</strong> ${escapeHtml(formatDate(survey.inspectionDate))}</p>
     <p class="meta"><strong>Report generated:</strong> ${escapeHtml(formatDateTime(new Date().toISOString()))}</p></div><button class="no-print" onclick="window.print()">Print / Save as PDF</button></header>
@@ -2744,7 +2744,7 @@ async function shareProject(survey) {
     window.alert('Building Name and Inspector Name are required before sharing a project.');
     return;
   }
-  const filename = `Feenstra-Project-${safeFileName(survey.buildingName)}.json`;
+  const filename = `FG-Ops-Project-${safeFileName(survey.buildingName)}.json`;
   const contents = JSON.stringify(projectPackage(survey));
   if (Capacitor.isNativePlatform()) {
     const saved = await Filesystem.writeFile({
@@ -2755,7 +2755,7 @@ async function shareProject(survey) {
     });
     await Share.share({
       title: `Share ${survey.buildingName} project`,
-      text: `Editable Feenstra Building And OHS project: ${survey.buildingName}`,
+      text: `Editable FG Ops project: ${survey.buildingName}`,
       url: saved.uri,
       dialogTitle: 'Share project package'
     });
@@ -2783,7 +2783,7 @@ async function importProject(file) {
     throw new Error(`Could not read the project package as JSON: ${error.message}`);
   }
   if (bundle?.format !== 'feenstra-light-surveys-project' || bundle.version !== 1 || !bundle.project) {
-    throw new Error('This file is not a supported Feenstra Building And OHS project package.');
+    throw new Error('This file is not a supported FG Ops project package.');
   }
   const project = normalizeSurvey(bundle.project);
   const property = state.properties.find((item) => item.id === project.propertyId)
