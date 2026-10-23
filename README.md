@@ -32,6 +32,22 @@ On Android, choose **Export PDF report** to open Android's print screen, where t
 
 The **Build Windows desktop app** workflow publishes a Windows x64 portable ZIP to [GitHub Releases](https://github.com/harderproductions-maker/feenstra-light-surveys/releases) on pushes to `main`; it can also be started manually from the **Actions** tab. Download the ZIP from the newest release whose tag starts with `desktop-v`, extract it, and run `Feenstra Building and OHS.exe` from the extracted folder. This is a portable app, not an installer. Each exported report or building check is saved automatically as a PDF under `Documents\Feenstra Reports\<Building>\<Report type>\<date> - <Report type>.pdf` (re-exports get a number, edited resubmissions show their revision). Use **File → Open reports folder** to open it.
 
+## Host the backend on your own Windows server
+
+1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) (free for small businesses and personal use) and set it to **Start Docker Desktop when you sign in**. Disable sleep in Windows power settings so the server stays on.
+2. Copy this repository to the server, copy `.env.example` to `.env`, and set unique long values for `POSTGRES_PASSWORD`, `JWT_SECRET`, and `ADMIN_PASSWORD`. Do not keep `admin` / `admin`.
+3. In the [Cloudflare Zero Trust dashboard](https://one.dash.cloudflare.com/) go to **Networks → Tunnels → Create a tunnel** (Cloudflared). Copy the tunnel token into `TUNNEL_TOKEN` in `.env`. Under **Public Hostname**, route a hostname on your domain to the service `http://app:3000`. A tunnel with a permanent address needs a domain managed by Cloudflare.
+4. Start it. All containers restart automatically after a reboot:
+
+```sh
+docker compose -f docker-compose.yml -f docker-compose.selfhost.yml up -d --build
+```
+
+5. Open `https://<your hostname>/api/health`; it should return `{"status":"ok"}`.
+6. Point the apps at that address: in the desktop app choose **File → Server address…**, and for Android set the Actions variable `VITE_API_BASE_URL` to it and rebuild the APK. To change the desktop default for everyone, edit `defaultServerUrl` in `desktop/main.cjs`.
+
+Back up the database regularly with `docker compose exec database pg_dump -U feenstra feenstra > backup.sql`. Cloudflare Tunnel requires no open router ports.
+
 ## Building checks and repairs
 
 From the **Home** dashboard, open **Building checks**, select a property, and choose one of the 21 supplied monthly forms. The question labels and field types are extracted from the completed PDFs in `Docs/`, but their historical answers are not copied into new runs. Use `npm run forms:extract` to regenerate `www/building-check-templates.json` after updating those source forms. Fill in the answers, add photos where prompted, and submit. Each property/form/month has one saved run and submitted PDF revisions; the previous months remain unchanged. Draft answers and photos are saved locally.

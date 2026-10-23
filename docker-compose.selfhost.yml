@@ -1,0 +1,20 @@
+# Use together with docker-compose.yml on your own server:
+#   docker compose -f docker-compose.yml -f docker-compose.selfhost.yml up -d --build
+# The app is not published on the network; it is reachable only through the Cloudflare Tunnel.
+services:
+  database:
+    restart: always
+
+  app:
+    restart: always
+    ports: !override
+      - "127.0.0.1:${APP_PORT:-3000}:3000"
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    restart: always
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN:?Set TUNNEL_TOKEN in .env}
+    depends_on:
+      - app
