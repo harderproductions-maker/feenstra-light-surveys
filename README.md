@@ -28,6 +28,10 @@ Before the first automated build, configure the repository Actions secret `ANDRO
 
 On Android, choose **Export PDF report** to open Android's print screen, where the report can be saved as a PDF or shared. In a browser, the print dialog can save the report as PDF.
 
+## Install the Windows desktop app
+
+The **Build Windows desktop app** workflow publishes a Windows x64 portable ZIP to [GitHub Releases](https://github.com/harderproductions-maker/feenstra-light-surveys/releases) on pushes to `main`; it can also be started manually from the **Actions** tab. Download the ZIP from the newest release whose tag starts with `desktop-v`, extract it, and run `Feenstra Building and OHS.exe` from the extracted folder. This is a portable app, not an installer.
+
 ## Building checks and repairs
 
 From the **Home** dashboard, open **Building checks**, select a property, and choose one of the 21 supplied monthly forms. The question labels and field types are extracted from the completed PDFs in `Docs/`, but their historical answers are not copied into new runs. Use `npm run forms:extract` to regenerate `www/building-check-templates.json` after updating those source forms. Fill in the answers, add photos where prompted, and submit. Each property/form/month has one saved run and submitted PDF revisions; the previous months remain unchanged. Draft answers and photos are saved locally.

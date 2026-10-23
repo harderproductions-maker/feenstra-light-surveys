@@ -1,0 +1,58 @@
+name: Build Windows desktop app
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build and publish Windows desktop app
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install web app dependencies
+        run: npm ci
+
+      - name: Build web app
+        env:
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+        run: npm run build
+
+      - name: Install desktop dependencies
+        working-directory: desktop
+        run: npm ci
+
+      - name: Package Windows desktop app
+        working-directory: desktop
+        run: npm run dist:win
+
+      - name: Upload desktop app artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Feenstra-Building-And-OHS-Windows
+          path: desktop/dist/Feenstra-Building-And-OHS-Windows-*.zip
+          if-no-files-found: error
+
+      - name: Publish desktop app release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./desktop/package.json').version")
+          TAG="desktop-v${VERSION}-${GITHUB_RUN_NUMBER}-${GITHUB_RUN_ATTEMPT}"
+          gh release create "$TAG" "desktop/dist/Feenstra-Building-And-OHS-Windows-${VERSION}.zip" \
+            --title "Feenstra Building and OHS Desktop ${VERSION} (${GITHUB_RUN_NUMBER})" \
+            --notes "Windows x64 portable desktop app. Download and extract the ZIP, then run Feenstra Building and OHS.exe." \
+            --latest=false

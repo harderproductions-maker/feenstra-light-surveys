@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'" />
+  <title>Server address</title>
+  <style>
+    body { font-family: Segoe UI, sans-serif; margin: 24px; }
+    input { width: 100%; padding: 8px; box-sizing: border-box; margin: 8px 0 12px; }
+    button { padding: 8px 16px; }
+    #msg { color: #b00020; min-height: 1.2em; }
+  </style>
+</head>
+<body>
+  <label for="url">Server address (for example http://192.168.1.20:3001)</label>
+  <input id="url" type="text" autofocus />
+  <div id="msg"></div>
+  <button id="save">Save and reload</button>
+  <script>
+    const input = document.getElementById('url');
+    const msg = document.getElementById('msg');
+    desktopSettings.get().then((s) => { input.value = s.serverUrl; });
+    async function save() {
+      const result = await desktopSettings.save(input.value);
+      if (result && result.error) msg.textContent = result.error;
+    }
+    document.getElementById('save').addEventListener('click', save);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
+  </script>
+</body>
+</html>

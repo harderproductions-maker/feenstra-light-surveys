@@ -8,3 +8,6 @@ www/assets/
 www/app.bundle.js
 __pycache__/
 .DS_Store
+desktop/node_modules/
+desktop/www/
+desktop/dist/
