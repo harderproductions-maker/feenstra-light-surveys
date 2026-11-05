@@ -31,7 +31,7 @@ public class PdfReportPlugin extends Plugin {
     @PluginMethod
     public void create(PluginCall call) {
         String html = call.getString("html");
-        String title = call.getString("title", "FG Ops Report");
+        String title = call.getString("title", "PrimeOps Report");
         if (html == null || html.isEmpty()) {
             call.reject("Report content is empty.");
             return;
