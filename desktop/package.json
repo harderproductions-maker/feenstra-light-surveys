@@ -9,7 +9,7 @@
     "dist:win": "node prepare.cjs && electron-builder --win zip --x64"
   },
   "build": {
-    "appId": "com.feenstra.buildingohs.desktop",
+    "appId": "com.primeops.desktop",
     "productName": "PrimeOps",
     "directories": { "output": "dist" },
     "files": ["main.cjs", "settings.html", "preload.cjs", "preload-app.cjs", "icon.png", "www/**/*"],
