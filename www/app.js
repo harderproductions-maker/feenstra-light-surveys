@@ -2732,7 +2732,7 @@ async function downloadReport(report, survey, reportId, meta) {
 
 function projectPackage(survey) {
   return {
-    format: 'feenstra-light-surveys-project',
+    format: 'primeops-project',
     version: 1,
     exportedAt: new Date().toISOString(),
     project: survey
@@ -2782,7 +2782,7 @@ async function importProject(file) {
   } catch (error) {
     throw new Error(`Could not read the project package as JSON: ${error.message}`);
   }
-  if (bundle?.format !== 'feenstra-light-surveys-project' || bundle.version !== 1 || !bundle.project) {
+  if (!['primeops-project', 'feenstra-light-surveys-project'].includes(bundle?.format) || bundle.version !== 1 || !bundle.project) {
     throw new Error('This file is not a supported PrimeOps project package.');
   }
   const project = normalizeSurvey(bundle.project);
