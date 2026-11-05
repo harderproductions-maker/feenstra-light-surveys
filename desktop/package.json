@@ -1,7 +1,7 @@
 {
-  "name": "feenstra-building-and-ohs-desktop",
+  "name": "primeops-desktop",
   "version": "1.1.0",
-  "description": "FG Ops desktop app",
+  "description": "PrimeOps desktop app",
   "main": "main.cjs",
   "private": true,
   "scripts": {
@@ -10,11 +10,11 @@
   },
   "build": {
     "appId": "com.feenstra.buildingohs.desktop",
-    "productName": "FG Ops",
+    "productName": "PrimeOps",
     "directories": { "output": "dist" },
     "files": ["main.cjs", "settings.html", "preload.cjs", "preload-app.cjs", "icon.png", "www/**/*"],
     "win": { "signAndEditExecutable": false },
-    "artifactName": "FG-Ops-Windows-${version}.${ext}"
+    "artifactName": "PrimeOps-Windows-${version}.${ext}"
   },
   "devDependencies": {
     "electron": "^33.2.1",
