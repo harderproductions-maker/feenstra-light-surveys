@@ -1,8 +1,8 @@
 {
-  "name": "feenstra-light-surveys",
+  "name": "primeops",
   "version": "1.1.0",
   "private": true,
-  "description": "Offline lighting surveys and OHS report export",
+  "description": "PrimeOps property inspections and lighting surveys",
   "scripts": {
     "build": "node scripts/copy_ocr_assets.cjs && vite build",
     "check": "node --check www/app.js",

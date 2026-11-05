@@ -13,6 +13,7 @@ let mainWindow = null;
 let settingsWindow = null;
 
 protocol.registerSchemesAsPrivileged([
+  { scheme: 'primeops', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true } },
   { scheme: 'feenstra', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true } }
 ]);
 
@@ -53,7 +54,7 @@ function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 860,
-    title: 'FG Ops',
+    title: 'PrimeOps',
     icon: path.join(__dirname, 'icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload-app.cjs'),
@@ -62,7 +63,7 @@ function createMainWindow() {
       sandbox: true
     }
   });
-  mainWindow.loadURL('feenstra://app/index.html');
+  mainWindow.loadURL('primeops://app/index.html');
   mainWindow.on('closed', () => { mainWindow = null; });
 }
 
@@ -89,7 +90,7 @@ function openSettings() {
   settingsWindow.on('closed', () => { settingsWindow = null; });
 }
 
-const reportsRoot = () => path.join(app.getPath('documents'), 'FG Ops Reports');
+const reportsRoot = () => path.join(app.getPath('documents'), 'PrimeOps Reports');
 
 // Makes a value safe as a single Windows folder or file name.
 function safeSegment(value, fallback) {
@@ -111,7 +112,7 @@ function uniquePath(dir, base) {
 }
 
 async function renderPdf(html) {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'feenstra-report-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'primeops-report-'));
   const tempFile = path.join(tempDir, 'report.html');
   fs.writeFileSync(tempFile, html);
   const printWindow = new BrowserWindow({
@@ -162,6 +163,7 @@ ipcMain.handle('settings:save', (event, value) => {
 });
 
 app.whenReady().then(() => {
+  protocol.handle('primeops', serveApp);
   protocol.handle('feenstra', serveApp);
   Menu.setApplicationMenu(Menu.buildFromTemplate([
     { label: 'File', submenu: [
