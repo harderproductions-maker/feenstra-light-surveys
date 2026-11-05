@@ -1,0 +1,24 @@
+/* PrimeOps usability pass: keep the existing workspace and offline forms intact. */
+:where(button, a, input, select, textarea):focus-visible {
+  outline: 3px solid #548bcb;
+  outline-offset: 3px;
+}
+.module-link { min-height: 48px; }
+.module-link[data-view="users"]::before { content: '♙'; }
+.workspace { min-width: 0; }
+@media (max-width: 760px) {
+  .topbar { height: auto; min-height: 66px; padding: 12px 14px; flex-wrap: wrap; gap: 10px; }
+  .topbar-actions { flex-wrap: wrap; margin: 0; gap: 6px; }
+  .topbar-actions .button { min-height: 44px; }
+  .offline-indicator { margin-left: auto; }
+  .layout { display: flex; flex-direction: column; min-height: 0; }
+  .rail { min-height: 0; padding: 12px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .module-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+  .module-link { min-width: 0; min-height: 48px; padding: 10px; border: 1px solid var(--line); background: var(--paper); overflow-wrap: anywhere; }
+  .rail-heading, .rail-actions, .survey-list, .rail-footnote { max-width: 100%; }
+  .workspace { width: 100%; min-width: 0; }
+}
+@media (max-width: 380px) {
+  .topbar-actions { width: 100%; }
+  .module-link { font-size: 12px; }
+}
