@@ -13,7 +13,8 @@ let mainWindow = null;
 let settingsWindow = null;
 
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'primeops', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true } }
+  { scheme: 'primeops', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true } },
+  { scheme: 'feenstra', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true } }
 ]);
 
 function normalizeServerUrl(value) {
@@ -162,6 +163,7 @@ ipcMain.handle('settings:save', (event, value) => {
 });
 
 app.whenReady().then(() => {
+  protocol.handle('primeops', serveApp);
   protocol.handle('feenstra', serveApp);
   Menu.setApplicationMenu(Menu.buildFromTemplate([
     { label: 'File', submenu: [
