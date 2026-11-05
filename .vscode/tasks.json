@@ -1,0 +1,26 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Reset PrimeOps platform administrator",
+			"type": "shell",
+			"command": "POSTGRES_HOST=127.0.0.1 POSTGRES_PORT=55433 node --env-file=.env server/reset-platform-admin.cjs primeops-admin",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Show running PrimeOps client and owner",
+			"type": "shell",
+			"command": "curl --fail --silent --show-error --max-time 5 --output /dev/null --write-out 'PrimeOps client: http://localhost:3000/ - HTTP %{http_code}\\n' http://localhost:3000/ && curl --fail --silent --show-error --max-time 5 --output /dev/null --write-out 'PrimeOps owner: http://localhost:3001/admin/ - HTTP %{http_code}\\n' http://localhost:3001/admin/",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "PrimeOps client and owner - persistent server logs",
+			"type": "shell",
+			"command": "printf '\\nPrimeOps client: http://localhost:3000/\\nPrimeOps owner: http://localhost:3001/admin/\\nServices use Docker restart policy unless-stopped. Keep forwarded ports private.\\n\\n' && docker logs --follow --tail 10 feenstra-light-surveys-app-1",
+			"isBackground": true,
+			"problemMatcher": []
+		}
+	]
+}

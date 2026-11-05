@@ -1,0 +1,18 @@
+{
+  "remote.autoForwardPorts": true,
+  "remote.autoForwardPortsSource": "output",
+  "remote.portsAttributes": {
+    "3000": {
+      "label": "PrimeOps client app",
+      "onAutoForward": "notify"
+    },
+    "3001": {
+      "label": "PrimeOps owner administration",
+      "onAutoForward": "notify"
+    },
+    "55433": {
+      "label": "Private database",
+      "onAutoForward": "ignore"
+    }
+  }
+}

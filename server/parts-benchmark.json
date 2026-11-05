@@ -1,0 +1,15 @@
+[
+  ["SQ Washer (SWNMN)", "Belt", 200923, "200923", 843, null, null, 790, "LvB", 790],
+  ["SQ Washer (SWNMN)", "Pressure switch", 202470, "202470", 239, null, null, 2220, "Universe Corp", 239],
+  ["SQ Washer (SWNMN)", "Door switch", 204696, "204696", 1053, null, null, null, "Universe Corp (only 1 quote)", 1053],
+  ["SQ Washer (SWNMN)", "Drain pump", "205217P", "36863", 1228, null, null, null, "Universe Corp (only 1 quote)", 1228],
+  ["SQ Washer (SWNMN)", "Drive gear", 38008, "38008", 176, null, null, null, "Universe Corp (only 1 quote)", 176],
+  ["SQ Washer (SWNMN)", "Pulley 50HZ", "205217P", null, 2535, null, null, null, "Universe Corp (only 1 quote)", 2535],
+  ["SQ Washer (SWNMN)", "Rack", 201664, null, 1764, null, null, null, "Universe Corp (only 1 quote)", 1764],
+  ["SQ S Dryer (SSEMN / SDEMN)", "Element Kit", 61929, "AD61929", 5519, null, 6200, 2900, "LvB", 2900],
+  ["SQ S Dryer (SSEMN / SDEMN)", "Thermo Fuse Kit", "490P3", "D515873", 1039, null, null, null, "Universe Corp (only 1 quote)", 1039],
+  ["SQ S Dryer (SSEMN / SDEMN)", "Belt", 511255, "AD510178", 564, null, null, null, "Universe Corp (only 1 quote)", 564],
+  ["SQ S Dryer (SSEMN / SDEMN)", "Hybrid Dryer Controllor", 517526, "TD517558", 5676, null, null, 2200, "LvB", 2200],
+  ["SQ S Dryer (SSEMN / SDEMN)", "Door switch", null, "AD504570", 282, null, null, 240, "LvB", 240],
+  ["SQ Combo (PTEJX/PTGJX)", "Heater Assy Kit", 61929, null, 5519, null, null, null, null, null]
+]

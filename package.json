@@ -1,6 +1,6 @@
 {
-  "name": "feenstra-light-surveys",
-  "version": "1.1.0",
+  "name": "primeops",
+  "version": "1.7.0",
   "private": true,
   "description": "Offline lighting surveys and OHS report export",
   "scripts": {
@@ -10,6 +10,7 @@
     "start": "node server/index.cjs",
     "android:add": "cap add android",
     "android:sync": "cap sync android",
+    "android:publish-update": "node scripts/publish_android_update.cjs",
     "postinstall": "node scripts/patch_capacitor_cli.cjs"
   },
   "dependencies": {
@@ -20,11 +21,15 @@
     "@tesseract.js-data/eng": "^1.0.0",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
+    "exceljs": "^4.4.0",
     "express": "^4.21.2",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
-    "pg": "^8.16.3",
+    "jszip": "^3.10.1",
+    "nodemailer": "^7.0.0",
     "pdfjs-dist": "^4.10.38",
+    "pdfkit": "^0.17.2",
+    "pg": "^8.16.3",
     "read-excel-file": "^9.3.12",
     "tesseract.js": "^6.0.1"
   },

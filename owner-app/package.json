@@ -1,0 +1,26 @@
+{
+  "name": "primeops-owner",
+  "version": "1.1.0",
+  "private": true,
+  "description": "PrimeOps company registration and licensing",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win zip --x64"
+  },
+  "build": {
+    "afterPack": "../scripts/brand_windows.cjs",
+    "appId": "app.primeops.owner",
+    "productName": "PrimeOps Owner",
+    "files": ["main.cjs", "preload.cjs", "index.html", "renderer.js", "styles.css", "icon.png"],
+    "directories": { "output": "../release/owner-app" },
+    "extraFiles": [{ "from": "README.txt", "to": "README.txt" }],
+    "win": { "signAndEditExecutable": false },
+    "artifactName": "PrimeOps-Owner-Windows-${version}.${ext}"
+  },
+  "devDependencies": {
+    "resedit": "1.7.2",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8"
+  }
+}

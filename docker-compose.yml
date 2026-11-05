@@ -3,13 +3,13 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: feenstra
-      POSTGRES_USER: feenstra
+      POSTGRES_DB: ${POSTGRES_DB:-primeops}
+      POSTGRES_USER: ${POSTGRES_USER:-primeops}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U feenstra -d feenstra"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
       timeout: 5s
       retries: 12
@@ -22,13 +22,37 @@ services:
         condition: service_healthy
     environment:
       PORT: 3000
-      DATABASE_URL: postgres://feenstra:${POSTGRES_PASSWORD}@database:5432/feenstra
+      ADMIN_PORT: 3001
+      ADMIN_HOST: 0.0.0.0
+      DATABASE_URL: postgres://${POSTGRES_USER:-primeops}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB:-primeops}
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
       ADMIN_EMAIL: ${ADMIN_EMAIL:?Set ADMIN_EMAIL in .env}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env}
-      CORS_ORIGINS: ${CORS_ORIGINS:-capacitor://localhost,http://localhost,https://localhost}
+      CORS_ORIGINS: ${CORS_ORIGINS:-capacitor://localhost,http://localhost,https://localhost,primeops://app}
+      LEASING_TEST_COMPANIES: ${LEASING_TEST_COMPANIES:-}
+      REPORTS_ROOT: /data/reports
+      ANDROID_UPDATES_ROOT: /data/android-updates
+      LICENSE_PUBLIC_KEY_FILE: ${LICENSE_PUBLIC_KEY_FILE:-}
+      COMPANY_REPORTS_ROOT: /data/company-reports
+      PUBLIC_APP_URL: ${PUBLIC_APP_URL:-}
+      PAYFAST_MERCHANT_ID: ${PAYFAST_MERCHANT_ID:-}
+      PAYFAST_MERCHANT_KEY: ${PAYFAST_MERCHANT_KEY:-}
+      PAYFAST_PASSPHRASE: ${PAYFAST_PASSPHRASE:-}
+      PAYFAST_SANDBOX: ${PAYFAST_SANDBOX:-true}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+    volumes:
+      - ${REPORTS_DIR:-./reports}:/data/reports
+      - ${ANDROID_UPDATES_DIR:-./android-updates}:/data/android-updates:ro
+      - ${LICENSE_KEYS_DIR:-./licence-public}:/data/licence:ro
+      - ${COMPANY_REPORTS_DIR:-./company-reports}:/data/company-reports
     ports:
       - "${APP_PORT:-3000}:3000"
+      - "127.0.0.1:${ADMIN_PORT:-3001}:3001"
 
 volumes:
   postgres_data:

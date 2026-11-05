@@ -11,3 +11,7 @@ __pycache__/
 desktop/node_modules/
 desktop/www/
 desktop/dist/
+android-updates/
+licence-keys/
+**/licence-owner-private.pem
+company-reports/

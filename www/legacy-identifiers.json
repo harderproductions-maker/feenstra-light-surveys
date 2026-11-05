@@ -1,0 +1,13 @@
+{
+  "storagePrefix": "feenstra-light-surveys",
+  "companyCodeKey": "fg-ops-company-code",
+  "defaultClientCode": "FEENSTRA",
+  "projectFormat": "feenstra-light-surveys-project",
+  "sessionIssuer": "feenstra-building-ohs",
+  "ownerKeySalt": "FG-Ops-owner",
+  "tokenPrefix": "FG1",
+  "desktopProfile": "Feenstra Building and OHS",
+  "desktopScheme": "feenstra",
+  "androidApplicationId": "com.feenstra.lightsurveys",
+  "registryTable": "fg_companies"
+}

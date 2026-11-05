@@ -7,5 +7,5 @@ if (!fs.existsSync(path.join(source, 'app.bundle.js'))) {
   throw new Error('Run "npm run build" in the project root first.');
 }
 fs.rmSync(target, { recursive: true, force: true });
-fs.cpSync(source, target, { recursive: true });
+fs.cpSync(source, target, { recursive: true, filter: (file) => !path.basename(file).includes('.test.') });
 console.log('Copied www into desktop/www');

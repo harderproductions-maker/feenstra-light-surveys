@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en" data-theme="dark"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'" />
+<title>PrimeOps Administration</title><link rel="stylesheet" href="styles.css" /><script defer src="renderer.js"></script></head>
+<body><header><div class="brand"><img class="brand-logo" src="icon.png" alt="" width="44" height="44" /><div><h1>PrimeOps Administration</h1><p>Private platform workspace</p></div></div><div class="header-actions"><button id="theme-toggle" type="button" aria-pressed="true">Light mode</button><button id="home-button" type="button" hidden>Home</button><button id="signout" hidden>Sign out</button></div></header>
+<main>
+<div class="workspace-intro"><p class="eyebrow">PRIMEOPS PLATFORM</p><h2>Your clients. One workspace.</h2><p>Manage clients, licences and buildings from one private backend. Every client's accounts and records stay separate.</p><p id="platform-identity" hidden></p></div>
+<form id="connect"><label>Server address<input name="server" type="url" required placeholder="https://your-server" /></label><button>Connect</button></form>
+<p id="status" role="status"></p>
+<section id="registration" hidden><h2>Set up PrimeOps administrator</h2>
+<form id="register"><p>Use the server's initial administrator account once to authorise setup.</p>
+<label>Admin username<input name="adminUsername" required autocomplete="off" /></label>
+<label>Admin password<input name="adminPassword" type="password" required autocomplete="off" /></label>
+<label>PrimeOps owner's name<input name="displayName" required maxlength="120" autocomplete="name" /></label>
+<label>PrimeOps administrator username<input name="ownerUsername" required autocomplete="username" maxlength="100" /></label>
+<label>PrimeOps administrator password<input name="ownerPassword" type="password" minlength="12" maxlength="72" required autocomplete="new-password" /></label>
+<button>Register administrator &amp; activate initial licence</button></form></section>
+<section id="login-section" hidden><h2>PrimeOps administrator sign-in</h2><p>For the PrimeOps owner and authorised platform staff only. Client accounts cannot sign in here.</p><form id="login">
+<label>Username<input name="username" required autocomplete="username" /></label><label>Password<input name="password" type="password" required autocomplete="current-password" /></label><button>Sign in</button></form></section>
+<section id="dashboard" hidden>
+<nav aria-label="Platform navigation"><p class="eyebrow">PRIMEOPS</p><button data-tab="home" aria-pressed="true">Home</button><button data-tab="clients" aria-pressed="false">Clients</button><button data-tab="accounts" aria-pressed="false">Accounts</button><button data-tab="invoice-setup" aria-pressed="false">Invoice setup</button><button data-tab="new-company" aria-pressed="false">Add client</button><button data-tab="staff" aria-pressed="false" hidden>PrimeOps team</button><button data-tab="security" aria-pressed="false">Change password</button>
+<div id="client-navigation" hidden><p class="eyebrow">OPEN CLIENT ACCOUNT</p><button data-tab="licensing" data-client-tab aria-pressed="false">Licence</button><button data-tab="client-account" data-client-tab aria-pressed="false">Account &amp; payments</button><button data-tab="operators" data-client-tab aria-pressed="false">Client operators</button><button data-tab="subscriptions" data-client-tab aria-pressed="false">Subscriptions</button><button data-tab="features" data-client-tab aria-pressed="false">Features</button><button data-tab="content" data-client-tab aria-pressed="false">Buildings &amp; checklists</button></div></nav>
+<div id="client-context" hidden><div><p class="eyebrow">CLIENT ACCOUNT</p><h2 id="open-client-name"></h2><p id="open-client-code"></p></div><button id="close-client" type="button">Back to clients</button></div>
+<section id="clients" hidden><p class="eyebrow">PLATFORM CLIENTS</p><h2>Client accounts</h2><p>Open a client's account to manage its licence, subscriptions, features, buildings and checklists.</p><div id="client-list"></div></section>
+<section id="home"><p class="eyebrow">PLATFORM WORKSPACE</p><h2>Welcome to PrimeOps</h2><p>This is your PrimeOps platform workspace. Open a client account from Clients only when you need to work on that client's behalf.</p>
+<div class="home-summary"><div><strong id="client-count">0</strong><span>Clients</span></div><div><strong>PrimeOps</strong><span>Platform workspace</span></div><div><strong id="home-role"></strong><span>Your platform role</span></div></div>
+<div id="home-finances" class="home-summary" aria-label="Platform financial totals"></div>
+<p id="home-payment-status"></p><h3>Clients behind on payments</h3><div id="home-overdue"></div>
+<h3>Clients paid in advance</h3><div id="home-prepaid"></div>
+<h3>Next 12 months</h3><div id="home-forecast"></div>
+<div class="home-cards">
+<button type="button" data-go="new-company" class="home-card"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg></span><strong>Add a client</strong><span>Create their main account and activate the first annual licence in one step.</span><span class="card-action">Register client &gt;</span></button>
+<button type="button" data-go="clients" class="home-card"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 6v6l4 2" /></svg></span><strong>Client accounts</strong><span>Open a client account to view its licence, expiry and renewal requests.</span><span class="card-action">View clients &gt;</span></button>
+<button type="button" data-go="clients" class="home-card"><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 21V3h14v18M2 21h20M9 7h1m4 0h1M9 11h1m4 0h1M9 15h1m4 0h1M10 21v-3h4v3" /></svg></span><strong>Buildings &amp; checklists</strong><span>Open the relevant client account before working on its buildings or checklists.</span><span class="card-action">Find client account &gt;</span></button>
+<button type="button" data-go="staff" class="home-card" id="team-card" hidden><span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3" /><path d="M3 21v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 5v2" /></svg></span><strong>Your PrimeOps team</strong><span>Add people who work for you, manage their access and reset staff passwords.</span><span class="card-action">Manage team &gt;</span></button>
+</div></section>
+<section id="accounts" hidden><p class="eyebrow">PLATFORM ACCOUNTS</p><h2>Income, forecasts &amp; payments</h2><p>Income is money recorded as received. Forecasts include configured monthly fees even before invoices exist; they are estimates, not received income. Open a client account to configure its fee or record payments.</p><button id="refresh-accounts" type="button">Refresh accounts</button><div id="accounts-summary" class="home-summary"></div>
+<div id="accounts-forecast"></div><label>Show clients<select id="account-filter"><option value="all">All clients</option><option value="overdue">Behind on payments</option><option value="prepaid">Paid in advance</option><option value="unconfigured">Monthly fee not configured</option></select></label><div id="accounts-list"></div></section>
+<section id="client-account" hidden><p class="eyebrow">OPEN CLIENT ACCOUNT</p><h2>Account &amp; payments</h2><p>Unpaid invoices block workspace access after the due date plus seven complete UTC calendar days. Full settlement restores access automatically. Licence expiry and manual inactive status remain separate.</p>
+<button id="refresh-client-account" type="button">Refresh statement</button><div id="client-account-summary"></div>
+<details id="forecast-plan-editor"><summary>Monthly billing &amp; forecast</summary><form id="forecast-plan-form">
+<label>Monthly fee (ZAR)<input name="monthlyFee" type="number" min="0" max="9999999.99" step="0.01" required /></label>
+<label>First billing month<input name="startsOn" type="month" required /></label><label>Last billing month (optional)<input name="endsOn" type="month" /></label>
+<p>Monthly invoices are automatic and follow the approved tier. Existing test clients show simulated TEST / DEMO invoices for presentations only: no emails, real collection or access blocking. New clients use live billing. Manually inactive clients pause invoicing. Service-month invoices are not counted twice; platform totals exclude test accounts.</p><button>Save billing dates &amp; forecast</button></form></details>
+<div id="client-forecast"></div>
+<details id="debtor-profile-editor"><summary>Debtor profile</summary><div id="debtor-profile-summary"></div><form id="debtor-profile-form">
+<label>Company / legal name<input name="legalName" required maxlength="160" /></label>
+<label>Registration number<input name="registrationNumber" maxlength="80" /></label><label>VAT registered?<select name="vatRegistered" required><option value="">Confirm VAT status</option><option value="false">No</option><option value="true">Yes</option></select></label><label>VAT number<input name="vatNumber" maxlength="80" /></label>
+<label>Billing address<textarea name="billingAddress" maxlength="1000" rows="3"></textarea></label>
+<label>Accounts contact name<input name="contactName" maxlength="120" /></label><label>Accounts email<input name="contactEmail" type="email" maxlength="200" /></label>
+<label>Accounts phone<input name="contactPhone" type="tel" maxlength="80" /></label><label>Payment terms (days)<input name="paymentTermsDays" type="number" min="0" max="365" step="1" required /></label>
+<label>Internal notes<textarea name="internalNotes" maxlength="2000" rows="3"></textarea></label>
+<p>Payment terms suggest a due date for new invoices. They do not change existing invoices or the seven-day blocking grace period. Internal notes are not shown to clients. No emails are sent automatically.</p><button>Save debtor profile</button></form></details>
+<details id="invoice-editor"><summary>Create invoice</summary><p>Set up seller and client billing details once. All invoices reuse the same standard layout and saved details; only change the amount, description or dates when needed. Submitting records the charge on the client account, regardless of email delivery.</p><div id="invoice-readiness" role="status"></div><p id="invoice-create-status" role="status"></p><form id="invoice-form">
+<label>Invoice reference (blank for automatic number)<input name="reference" maxlength="120" /></label><label>Description<input name="description" required maxlength="500" /></label>
+<label>Amount (ZAR)<input name="amount" type="number" min="0.01" max="9999999.99" step="0.01" required /></label>
+<label>Invoice date (UTC)<input name="issuedOn" type="date" required /></label><label>Due date (UTC)<input name="dueOn" type="date" required /></label>
+<label>Monthly service period (optional)<input name="serviceMonth" type="month" /></label><p>For a monthly service fee, select its month. Leave blank for extra/one-off charges. One active monthly service invoice is allowed per month.</p><button>Create invoice</button></form></details>
+<details><summary>Record received payment</summary><form id="payment-form">
+<label>Invoice<select name="invoiceId" required></select></label><label>Bank / payment reference<input name="reference" required maxlength="120" /></label>
+<label>Amount received (ZAR)<input name="amount" type="number" min="0.01" max="9999999.99" step="0.01" required /></label>
+<label>Payment date (UTC)<input name="paidOn" type="date" required /></label><p>Allocate payments to the relevant invoice. Split a payment across invoices using a distinct reference per allocation.</p><button>Record payment</button></form></details>
+<details><summary>Record advance payment / prepaid credit</summary><form id="prepayment-form">
+<label>Bank / payment reference<input name="reference" required maxlength="120" /></label>
+<label>Amount received (ZAR)<input name="amount" type="number" min="0.01" max="9999999.99" step="0.01" required /></label>
+<label>Payment date (UTC)<input name="paidOn" type="date" required /></label>
+<p>Record money actually received. Credit pays existing unpaid invoices oldest-due first, then remains available for future invoices. It counts as income only once, when received.</p><button>Record advance payment</button></form></details>
+<details id="extension-editor"><summary>Supervisor payment agreement / unblock</summary><form id="extension-form">
+<label>Allow access until (UTC)<input name="until" type="datetime-local" step="1" required /></label>
+<label>Agreement / reason<input name="reason" required maxlength="500" /></label>
+<label>Your Owner / Supervisor password<input name="password" type="password" required maxlength="72" autocomplete="current-password" /></label>
+<p>Does not erase debt or bypass an expired licence or manually inactive account. Access blocks again when this dated agreement expires unless the overdue invoices are paid.</p>
+<button value="grant">Authorise dated extension</button><button type="submit" value="revoke" formnovalidate>Revoke extension</button></form></details>
+<details id="correction-editor"><summary>Correct an invoice or payment</summary><form id="correction-form">
+<label>Record<select name="record" required></select></label><label>Correction reason<input name="reason" required maxlength="500" /></label>
+<label>Your Owner / Supervisor password<input name="password" type="password" required maxlength="72" autocomplete="current-password" /></label>
+<p>Corrections retain history. Reverse payments before voiding their invoice. Reversing an advance receipt also reverses its invoice allocations and may restore arrears.</p><button>Apply correction</button></form></details>
+<h3>Invoices</h3><div id="account-invoices"></div><h3>Payments / credit allocations</h3><div id="account-payments"></div><h3>Advance receipts</h3><div id="account-credits"></div><h3>Account history</h3><div id="account-events"></div></section>
+<section id="operators" hidden><p class="eyebrow">OPEN CLIENT ACCOUNT</p><h2>Client operators &amp; access</h2><p>Owners and platform staff can add client staff, including Office Administrators, and assign buildings and sections. Office Administrators default to Leasing and Billing; they do not need unit numbers or resident details. Students and tenants are created and managed only in the client app. The main client administrator retains all client buildings and is protected. Platform staff roles are managed separately in PrimeOps team.</p><button type="button" id="refresh-operators">Refresh operators</button><div id="operator-list"></div></section>
+<section id="invoice-setup" hidden><h2>Invoice seller &amp; delivery setup</h2>
+<p>One-time setup: save the actual invoicing entity here. These details and the standard invoice layout are reused automatically for future invoices. Change them only when the business particulars change; already issued invoices keep their original details. This template supports South African full-invoice fields; verify tax status, rates and particulars with your accountant. It is not a guarantee of legal compliance.</p>
+<p id="invoice-delivery-setup"></p><form id="invoice-settings-form">
+<label>Jurisdiction<select name="jurisdiction"><option value="ZA">South Africa</option></select></label>
+<label>Seller legal / trading name<input name="legalName" maxlength="160" required /></label><label>Registration number<input name="registrationNumber" maxlength="80" /></label>
+<label>Business address<textarea name="address" maxlength="1000" required></textarea></label>
+<label>Billing email<input name="email" type="email" maxlength="200" required /></label><label>Phone<input name="phone" maxlength="80" /></label>
+<label>VAT registered?<select name="vatRegistered" required><option value="">Confirm VAT status</option><option value="false">No</option><option value="true">Yes</option></select></label>
+<label>VAT number<input name="vatNumber" maxlength="80" /></label><label>VAT rate (%)<input name="vatRate" type="number" min="0" max="30" step="0.01" required /></label>
+<label>Invoice payment terms / instructions<textarea name="terms" maxlength="1500"></textarea></label>
+<p>Invoice amounts are final totals including VAT where applicable. Client details come from their reviewed billing profile. Configure SMTP and Payfast merchant credentials privately through server environment variables, never in chat. Test payments never settle live debt.</p>
+<button>Save seller details</button></form></section>
+<section id="staff" hidden><p class="eyebrow">PLATFORM TEAM</p><h2>People working for PrimeOps</h2>
+<p id="platform-owner"></p><p>Only the PrimeOps owner can manage staff accounts. Administrators can record payments. Supervisors and the owner can also issue/correct invoices and authorise dated payment agreements with their own passwords. These are not client user accounts.</p>
+<form id="staff-form">
+<label>Staff member's name<input name="displayName" required maxlength="120" autocomplete="off" /></label>
+<label>Username<input name="username" required maxlength="100" autocomplete="off" /></label>
+<label>Initial password<input name="password" type="password" required minlength="12" maxlength="72" autocomplete="new-password" /></label>
+<label>Role<select name="role"><option value="administrator">Administrator</option><option value="supervisor">Supervisor</option></select></label><p>Each person has their own login and can change their own password.</p><button>Add staff member</button>
+</form><h3>Staff accounts</h3><div id="staff-list"></div></section>
+<section id="security" hidden><p class="eyebrow">YOUR PLATFORM ACCOUNT</p><h2>Change administrator password</h2>
+<p>Changes only your PrimeOps administrator password. Client accounts and licences are not affected. You will sign in again after saving.</p>
+<form id="password-form">
+<label>Current password<input name="currentPassword" type="password" required autocomplete="current-password" maxlength="72" /></label>
+<label>New password<input name="newPassword" type="password" required autocomplete="new-password" minlength="12" maxlength="72" /></label>
+<label>Confirm new password<input name="confirmPassword" type="password" required autocomplete="new-password" minlength="12" maxlength="72" /></label>
+<p>Choose at least 12 characters. Avoid reusing a password from another service.</p><button>Save new password</button>
+</form></section>
+<section id="licensing" hidden><p class="eyebrow">CLIENT OVERVIEW</p><h2 id="company-name"></h2>
+<div class="licence-metrics"><div><span>Client code</span><strong id="company-code"></strong></div><div><span>Licence status</span><strong id="licence-state"></strong></div><div><span>Valid until</span><strong id="expiry"></strong></div></div>
+<button id="issue">Renew licence for one year</button>
+<p>The first annual licence is registered automatically when you add a client. Renew it here; connected devices update automatically.</p>
+<details><summary>Account status &amp; dates</summary>
+<form id="client-access-form">
+<label class="inline"><input name="active" type="checkbox" /> Client active</label>
+<label>Licence / billing period starts (UTC)<input name="startsAt" type="datetime-local" step="1" required /></label>
+<label>Licence / billing period ends (UTC)<input name="expiresAt" type="datetime-local" step="1" required /></label>
+<label>Reason for change<input name="reason" maxlength="500" required /></label>
+<p>These are the actual access dates, not a billing reminder. Inactive clients cannot sign in or use online APIs. Their records are kept. Offline devices receive changes when they reconnect; existing offline access lasts until its cached expiry. Dates are shown and saved in UTC.</p>
+<button>Save status &amp; access dates</button>
+</form></details>
+<details><summary>Manual token transfer (optional)</summary><button id="copy-token" disabled>Copy current token</button></details>
+<label class="inline"><input id="testing" type="checkbox" /> Allow free in-app test renewal for this client</label>
+<p>Testing licence renewals are free. This does not disable monthly subscription invoices for live clients.</p>
+<h3>Renewal requests</h3><div id="requests"></div></section>
+<section id="subscriptions" hidden><h2>Subscriptions</h2><p id="subscription-company"></p>
+<p id="subscription-current"></p><form id="subscription-form"><label>Plan<select name="plan">
+<option value="basic">Basic — R450/month — up to 10 users</option><option value="building-managers">Building Managers — R850/month — up to 20 users</option><option value="operations">Operations — R1500/month — unlimited users</option>
+</select></label><button>Apply plan</button></form>
+<p>All active accounts count, including admins. Same features in every plan. Monthly invoices are automatic. Approved plan changes update future unissued charges; issued invoices do not change. Existing clients show TEST / DEMO invoices only, with nothing payable.</p>
+<h3>Plan requests</h3><div id="subscription-requests"></div></section>
+<section id="features" hidden><h2>Company features</h2><p id="features-company"></p><ul id="features-active"></ul>
+<p>Initial selection: 1-5 features free. Later additions: R100 per feature once-off, testing only. No payments.</p>
+<h3>Activation requests</h3><div id="feature-requests"></div></section>
+<section id="content" hidden><h2>Buildings &amp; checklists</h2><p id="content-company"></p>
+<form id="building-form"><h3>Add building</h3><label>Building name<input name="name" maxlength="120" required /></label><label>City<input name="city" maxlength="120" /></label><button>Add building</button></form>
+<details><summary>Buildings</summary><ul id="buildings"></ul></details>
+<form id="owner-checklist-form"><h3>Create / import checklist</h3>
+<label>Import JSON<input id="import-checklist" type="file" accept=".json" /></label>
+<label>Title<input name="title" maxlength="150" required /></label>
+<label class="inline"><input name="companyWide" type="checkbox" checked /> All buildings in this client account</label>
+<fieldset><legend>Or select buildings</legend><div id="checklist-buildings"></div></fieldset>
+<div id="questions"></div><button id="add-question" type="button">+ Question</button><button>Save checklist to this client account</button>
+</form><h3>Company checklists</h3><ul id="checklists"></ul></section>
+<section id="new-company" hidden><h2>Add client</h2><form id="company-form">
+<label>Client company name<input name="name" required maxlength="120" placeholder="Africrest" /></label>
+<label>Client company code<input name="code" required pattern="[A-Za-z0-9][A-Za-z0-9-]{1,39}" maxlength="40" placeholder="AFRICREST" /></label>
+<label>Client's main account username<input name="adminUsername" required maxlength="100" autocomplete="off" /></label>
+<label>Client's main account password<input name="adminPassword" type="password" required minlength="12" maxlength="72" autocomplete="new-password" /></label>
+<label>Plan<select name="subscriptionPlan"><option value="basic">Basic — R450/month — up to 10 users</option><option value="building-managers">Building Managers — R850/month — up to 20 users</option><option value="operations">Operations — R1500/month — unlimited users</option></select></label>
+<label>Legal billing address<textarea name="billingAddress" required maxlength="1000"></textarea></label>
+<label>Accounts email<input name="billingEmail" type="email" required maxlength="200" /></label>
+<label>Client VAT registered<select name="billingVatRegistered" required><option value="">Confirm VAT status</option><option value="false">No</option><option value="true">Yes</option></select></label>
+<label>Client VAT number (if registered)<input name="billingVatNumber" maxlength="80" /></label>
+<p>The company name above is used as the legal debtor name. Creates a live billable client and activates its first annual licence. The full monthly fee is invoiced immediately (no proration), then on the 1st of every month, with 30-day payment terms. Complete seller Invoice setup first. Invoice failures are reported and retried, not silently skipped. Existing test clients show simulated invoices only.</p><button>Add client &amp; start monthly billing</button></form></section>
+</section></main></body></html>
+<dialog id="owner-invoice-dialog"><h2>Issued invoice</h2><button type="button" id="close-owner-invoice">Close</button><button type="button" id="print-owner-invoice">Print / save PDF</button><iframe title="Issued invoice" class="invoice-frame" sandbox="allow-same-origin allow-modals"></iframe></dialog></body></html>

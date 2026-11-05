@@ -1,19 +1,23 @@
-const { app, BrowserWindow, Menu, ipcMain, net, protocol, shell } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, net, protocol, session, shell } = require('electron');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { pathToFileURL } = require('url');
+const legacy = require('./www/legacy-identifiers.json');
 
-const defaultServerUrl = 'https://curly-palm-tree-xrv479j4xw93vp67-3001.app.github.dev';
+const defaultServerUrl = '';
 const wwwRoot = path.join(__dirname, 'www');
 const configPath = () => path.join(app.getPath('userData'), 'desktop-config.json');
-// Keep the profile folder used before the rename so saved sign-ins and local data are preserved.
-app.setPath('userData', path.join(app.getPath('appData'), 'Feenstra Building and OHS'));
+const previousProfile = path.join(app.getPath('appData'), legacy.desktopProfile);
+const profile = path.join(app.getPath('appData'), 'PrimeOps');
+const appScheme = fs.existsSync(previousProfile) ? legacy.desktopScheme : 'primeops';
+if (fs.existsSync(previousProfile) && !fs.existsSync(profile)) fs.cpSync(previousProfile, profile, { recursive: true, errorOnExist: true });
+app.setPath('userData', profile);
 let mainWindow = null;
 let settingsWindow = null;
 
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'feenstra', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true } }
+  { scheme: appScheme, privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true } }
 ]);
 
 function normalizeServerUrl(value) {
@@ -53,7 +57,7 @@ function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 860,
-    title: 'FG Ops',
+    title: 'PrimeOps',
     icon: path.join(__dirname, 'icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload-app.cjs'),
@@ -62,7 +66,7 @@ function createMainWindow() {
       sandbox: true
     }
   });
-  mainWindow.loadURL('feenstra://app/index.html');
+  mainWindow.loadURL(`${appScheme}://app/index.html`);
   mainWindow.on('closed', () => { mainWindow = null; });
 }
 
@@ -89,7 +93,7 @@ function openSettings() {
   settingsWindow.on('closed', () => { settingsWindow = null; });
 }
 
-const reportsRoot = () => path.join(app.getPath('documents'), 'FG Ops Reports');
+const reportsRoot = () => path.join(app.getPath('documents'), 'PrimeOps Reports');
 
 // Makes a value safe as a single Windows folder or file name.
 function safeSegment(value, fallback) {
@@ -111,7 +115,7 @@ function uniquePath(dir, base) {
 }
 
 async function renderPdf(html) {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'feenstra-report-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'primeops-report-'));
   const tempFile = path.join(tempDir, 'report.html');
   fs.writeFileSync(tempFile, html);
   const printWindow = new BrowserWindow({
@@ -144,6 +148,24 @@ ipcMain.handle('reports:save', async (event, report) => {
   }
 });
 
+ipcMain.handle('quotes:open-email', async (event, value) => {
+  if (event.sender !== mainWindow?.webContents) return { error: 'Not allowed.' };
+  try {
+    if (typeof value !== 'string' || value.length > 200000) throw new Error('The quotation email is too large.');
+    const url = new URL(value);
+    const { validQuoteEmail } = await import('./www/parts-quotes.mjs');
+    if (url.protocol !== 'mailto:' || !validQuoteEmail(decodeURIComponent(url.pathname))
+        || !validQuoteEmail(url.searchParams.get('bcc'))
+        || [...url.searchParams.keys()].some((key) => !['bcc', 'subject', 'body'].includes(key))) {
+      throw new Error('The quotation email recipients are invalid.');
+    }
+    await shell.openExternal(url.href);
+    return { ok: true };
+  } catch (error) {
+    return { error: `Could not open the email app: ${error.message}` };
+  }
+});
+
 ipcMain.handle('settings:get', (event) => {
   if (event.sender !== settingsWindow?.webContents) return null;
   return { serverUrl: readServerUrl() };
@@ -162,7 +184,14 @@ ipcMain.handle('settings:save', (event, value) => {
 });
 
 app.whenReady().then(() => {
-  protocol.handle('feenstra', serveApp);
+  session.defaultSession.setPermissionCheckHandler((webContents, permission, origin) =>
+    webContents === mainWindow?.webContents && ['media', 'geolocation'].includes(permission) && origin === `${appScheme}://app`);
+  session.defaultSession.setPermissionRequestHandler((webContents, permission, callback, details) => {
+    callback(webContents === mainWindow?.webContents
+      && details.securityOrigin === `${appScheme}://app`
+      && (permission === 'geolocation' || (permission === 'media' && details.mediaTypes?.includes('video'))));
+  });
+  protocol.handle(appScheme, serveApp);
   Menu.setApplicationMenu(Menu.buildFromTemplate([
     { label: 'File', submenu: [
       { label: 'Open reports folder', click: () => { fs.mkdirSync(reportsRoot(), { recursive: true }); shell.openPath(reportsRoot()); } },

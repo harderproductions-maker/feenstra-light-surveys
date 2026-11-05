@@ -1,0 +1,73 @@
+[
+  {
+    "id": "security", "name": "Security", "initialStatus": "open",
+    "transitions": { "open": ["in_progress", "resolved"], "in_progress": ["resolved"], "resolved": ["open"] },
+    "fields": [
+      { "id": "kind", "label": "Contact type", "type": "select", "options": ["message", "report"], "required": true },
+      { "id": "subject", "label": "Subject", "type": "text", "max": 150, "required": true },
+      { "id": "description", "label": "Message / report", "type": "textarea", "max": 4000, "required": true },
+      { "id": "priority", "label": "Priority", "type": "select", "options": ["normal", "urgent"], "required": true }
+    ]
+  },
+  {
+    "id": "residents", "name": "Students / tenants & visitors", "initialStatus": "pending",
+    "transitions": { "pending": ["approved", "rejected", "cancelled"], "approved": ["checked_in", "cancelled"], "checked_in": ["checked_out"], "rejected": [], "cancelled": [], "checked_out": [] },
+    "fields": [
+      { "id": "visitorName", "label": "Visitor name", "type": "text", "max": 150, "required": true },
+      { "id": "phone", "label": "Visitor phone (optional)", "type": "tel", "max": 40 },
+      { "id": "expectedAt", "label": "Expected arrival", "type": "datetime-local", "required": true },
+      { "id": "purpose", "label": "Purpose of visit", "type": "text", "max": 500, "required": true }
+    ]
+  },
+  {
+    "id": "meters", "name": "Meter checks", "initialStatus": "recorded", "transitions": { "recorded": [] },
+    "fields": [
+      { "id": "meterReference", "label": "Meter number / reference", "type": "text", "max": 100, "required": true },
+      { "id": "meterType", "label": "Meter type", "type": "select", "options": ["electricity", "water", "gas", "other"], "required": true },
+      { "id": "reading", "label": "Reading", "type": "number", "required": true },
+      { "id": "unit", "label": "Unit (e.g. kWh or m3)", "type": "text", "max": 30, "required": true },
+      { "id": "readAt", "label": "Reading date and time", "type": "datetime-local", "required": true },
+      { "id": "reset", "label": "Meter reset / replacement?", "type": "select", "options": ["no", "yes"] },
+      { "id": "notes", "label": "Condition / notes", "type": "textarea", "max": 2000 }
+    ]
+  },
+  {
+    "id": "assets", "name": "Asset management", "initialStatus": "active",
+    "transitions": { "active": ["maintenance", "retired"], "maintenance": ["active", "retired"], "retired": ["active"] },
+    "fields": [
+      { "id": "assetTag", "label": "Asset tag", "type": "text", "max": 100, "required": true },
+      { "id": "name", "label": "Asset name", "type": "text", "max": 150, "required": true },
+      { "id": "category", "label": "Category", "type": "text", "max": 100, "required": true },
+      { "id": "serialNumber", "label": "Serial number", "type": "text", "max": 100 },
+      { "id": "location", "label": "Location in building", "type": "text", "max": 150 },
+      { "id": "condition", "label": "Condition", "type": "select", "options": ["unknown", "good", "fair", "poor", "unserviceable"] },
+      { "id": "inspectionIntervalDays", "label": "Inspection interval (days; 0 disables automatic scheduling)", "type": "number" },
+      { "id": "nextInspectionOn", "label": "Next inspection due", "type": "date" },
+      { "id": "notes", "label": "Condition / notes", "type": "textarea", "max": 2000 }
+    ]
+  },
+  {
+    "id": "incidents", "name": "Incident reporting", "initialStatus": "reported",
+    "transitions": { "reported": ["investigating", "resolved"], "investigating": ["resolved"], "resolved": ["reported"] },
+    "fields": [
+      { "id": "subject", "label": "Incident", "type": "text", "max": 150, "required": true },
+      { "id": "occurredAt", "label": "Date and time of incident", "type": "datetime-local", "required": true },
+      { "id": "description", "label": "What happened?", "type": "textarea", "max": 4000, "required": true },
+      { "id": "priority", "label": "Priority", "type": "select", "options": ["normal", "urgent"], "required": true }
+    ]
+  },
+  {
+    "id": "contractors", "name": "Contractor management", "initialStatus": "active",
+    "transitions": { "active": ["suspended", "completed"], "suspended": ["active", "completed"], "completed": ["active"] },
+    "fields": [
+      { "id": "name", "label": "Contractor / company", "type": "text", "max": 150, "required": true },
+      { "id": "trade", "label": "Trade / service", "type": "text", "max": 100, "required": true },
+      { "id": "contactPerson", "label": "Contact person", "type": "text", "max": 100, "required": true },
+      { "id": "phone", "label": "Phone", "type": "tel", "max": 40, "required": true },
+      { "id": "email", "label": "Email", "type": "email", "max": 254 },
+      { "id": "startsOn", "label": "Work starts", "type": "date", "required": true },
+      { "id": "endsOn", "label": "Work ends", "type": "date", "required": true },
+      { "id": "notes", "label": "Scope of work / notes", "type": "textarea", "max": 2000 }
+    ]
+  }
+]

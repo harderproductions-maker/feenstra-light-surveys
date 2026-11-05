@@ -1,5 +1,8 @@
 {
-  "appId": "com.feenstra.lightsurveys",
-  "appName": "FG Ops",
-  "webDir": "www"
+  "appId": "app.primeops.mobile",
+  "appName": "PrimeOps",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": true
+  }
 }

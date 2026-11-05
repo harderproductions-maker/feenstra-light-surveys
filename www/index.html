@@ -5,50 +5,157 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#070618" />
     <meta name="referrer" content="no-referrer" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' https: http://localhost:* http://127.0.0.1:* capacitor://localhost; form-action 'self'" />
-    <title>FG Ops</title>
-    <link rel="icon" type="image/png" href="favicon.png" />
-    <link rel="stylesheet" href="styles.css" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' https: http: http://127.0.0.1:* capacitor://localhost; form-action 'self' https://www.payfast.co.za https://sandbox.payfast.co.za" />
+    <title>PrimeOps</title>
+    <link rel="icon" type="image/png" href="favicon.png?v=primeops-ribbon-1" />
+    <link rel="stylesheet" href="styles.css?v=primeops-ribbon-1" />
     <script src="config.js"></script>
     <script type="module" src="app.bundle.js"></script>
   </head>
   <body>
+    <aside id="licence-warning" class="offline-banner" hidden role="alert">
+      <span data-licence-warning></span>
+      <button class="button secondary" type="button" data-open-licence>Renew system licence</button>
+    </aside>
+    <main id="licence-screen" class="auth-screen" hidden>
+      <section class="auth-card">
+        <img class="brand-logo" src="logo.png?v=primeops-ribbon-1" alt="" width="40" height="40" />
+        <h1>System licence required</h1>
+        <p data-company-name></p>
+        <div data-company-selector>
+          <label>Company code<input data-company-code autocomplete="organization" maxlength="40" /></label>
+          <button type="button" class="button secondary" data-change-company>Switch company</button>
+        </div>
+        <p data-licence-message role="alert"></p>
+        <p>Saved work stays on this device. App access is blocked until the owner renews the licence.</p>
+        <p>System ID: <code data-licence-system></code></p>
+        <button class="button primary" type="button" data-open-licence>Activate / renew licence</button>
+        <button class="button secondary" type="button" id="licence-recheck">Check again</button>
+        <button class="button secondary" type="button" data-device-transfer>Move device data</button>
+        <label>Server address<input id="licence-server" type="url" placeholder="https://your-server" /></label>
+        <button class="button secondary" type="button" id="licence-change-server">Connect to this server</button>
+      </section>
+    </main>
+    <aside id="android-update-banner" class="offline-banner" hidden aria-live="polite">
+      <span data-update-message></span>
+      <button class="button secondary" type="button" data-install-update hidden>Download and install update</button>
+    </aside>
     <main id="auth-screen" class="auth-screen">
       <form id="login-form" class="auth-card">
-        <img class="brand-logo" src="logo.png" alt="" width="40" height="40" />
-        <p class="eyebrow">FG OPS</p>
+        <img class="brand-logo" src="logo.png?v=primeops-ribbon-1" alt="" width="40" height="40" />
+        <p class="eyebrow">PRIMEOPS</p>
         <h1>Sign in to your workspace</h1>
-        <p class="auth-description">Your surveys, building checks, photos, and reports sync to your team's shared workspace.</p>
+        <div data-company-selector>
+          <label>Client code or company name<input name="company" data-company-code autocomplete="organization" maxlength="120" required /></label>
+        </div>
         <label>Username<input name="email" type="text" autocomplete="username" required /></label>
         <label>Password<input name="password" type="password" autocomplete="current-password" required /></label>
+        <details class="server-address">
+          <summary>Server address</summary>
+          <label>Backend server<input id="server-url" type="url" inputmode="url" placeholder="http://192.168.1.20:3001" autocomplete="off" /></label>
+          <p class="auth-footnote">Enter the address of the PC running the PrimeOps server. Leave blank to use the address this page was opened from.</p>
+        </details>
         <p id="login-error" class="auth-error" role="alert" hidden></p>
         <button class="button primary" type="submit">Sign in</button>
-        <p class="auth-footnote">Accounts are provided by your workspace administrator.</p>
+        <button class="button secondary" type="button" data-check-app-updates hidden>Check for app updates</button>
+        <button class="button secondary" type="button" data-device-transfer>Move device data</button>
+        <button class="button secondary" type="button" data-open-licence>Licence help</button>
+        <p class="auth-footnote">Accounts are provided by your workspace administrator. Sign in online once on this device to enable offline sign-in with the same username and password. Downloaded work stays available if the server is down.</p>
       </form>
     </main>
+    <main id="platform-account-screen" class="auth-screen" hidden>
+      <section class="auth-card">
+        <h1>PrimeOps account overdue</h1>
+        <p role="alert">Your workspace is blocked for overdue invoices. Your data is retained. Contact PrimeOps about payment or an agreement.</p>
+        <div data-platform-statement role="status"></div>
+        <button type="button" class="button primary" id="recheck-platform-account">Check account again</button>
+        <button type="button" class="button secondary" id="blocked-signout">Sign out</button>
+      </section>
+    </main>
+    <dialog id="platform-account-dialog" class="survey-dialog">
+      <div class="dialog-heading"><h2>PrimeOps account statement</h2><button type="button" class="button secondary" id="close-platform-account">Close</button></div>
+      <div data-platform-statement role="status"></div>
+    </dialog>
+    <dialog id="invoice-document-dialog" class="survey-dialog">
+      <div class="dialog-heading"><h2>Invoice</h2><button type="button" class="button secondary" id="close-invoice-document">Close</button></div>
+      <button type="button" class="button primary" id="print-invoice-document">Print / save PDF</button>
+      <iframe title="Issued invoice" class="invoice-frame" sandbox="allow-same-origin allow-modals"></iframe>
+    </dialog>
+    <dialog id="licence-dialog" class="survey-dialog">
+      <div class="dialog-heading"><h2>Annual system licence</h2><button class="icon-button quiet" type="button" id="licence-close" aria-label="Close">×</button></div>
+      <p data-licence-message role="status"></p>
+      <p>System ID: <code data-licence-system></code></p>
+      <p>Expiry: <span id="licence-expiry">Not activated</span></p>
+      <section id="licence-renewal-options" hidden>
+        <form id="licence-renewal-form" class="storage-form">
+          <label>MM / admin username<input name="username" autocomplete="username" required /></label>
+          <label>Password<input name="password" type="password" autocomplete="current-password" required /></label>
+          <button class="button primary" type="submit" value="request">Request renewal</button>
+          <button class="button secondary" type="submit" id="licence-test-renew" value="test" hidden>Free test renewal</button>
+        </form>
+        <p>No payments collected during testing.</p>
+      </section>
+      <details><summary>Manual token</summary>
+      <button class="button secondary" type="button" id="licence-download">Download current token</button>
+      <form id="licence-form" class="storage-form">
+        <label>New owner-generated token<textarea name="token" rows="5" maxlength="4096" required spellcheck="false" autocomplete="off"></textarea></label>
+        <button class="button primary" type="submit">Activate token</button>
+      </form>
+      </details>
+      <p id="licence-status" role="status"></p>
+    </dialog>
     <div id="app-shell" hidden>
     <header class="topbar">
-      <a class="brand" href="#" aria-label="FG Ops home">
-        <img class="brand-logo" src="logo.png" alt="" width="40" height="40" />
-        <span>FG <strong>OPS</strong></span>
+      <a class="brand" href="#" aria-label="PrimeOps home">
+        <img class="brand-logo" src="logo.png?v=primeops-ribbon-1" alt="" width="40" height="40" />
+        <span>Prime<strong>Ops</strong></span>
       </a>
       <div class="topbar-actions">
         <button class="button secondary theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode" aria-pressed="false"><span data-theme-icon aria-hidden="true">☾</span><span data-theme-label>Dark mode</span></button>
         <button class="button secondary" id="back-button" type="button" hidden>← Back</button>
         <button class="button secondary" id="home-button" type="button">Home</button>
-        <button class="button secondary" id="account-button" type="button">Account</button>
+        <button class="button secondary" id="account-button" type="button"><img data-profile-photo class="profile-avatar profile-avatar-small" alt="" width="28" height="28" hidden />Account</button>
+        <button class="button secondary" id="platform-account-button" type="button" hidden>PrimeOps statement</button>
         <button class="button secondary" id="signout-button" type="button">Sign out</button>
       </div>
       <span id="sync-status" class="offline-indicator" role="status" aria-live="polite"><span></span> SYNCING</span>
     </header>
 
+    <aside id="technician-alert-banner" class="offline-banner" hidden role="status">
+      <span data-technician-alert-summary></span>
+      <button type="button" class="button secondary" id="open-technician-schedule">Open technician schedule</button>
+    </aside>
+    <aside id="offline-banner" class="offline-banner" hidden aria-live="polite">
+      <span data-offline-summary></span>
+      <button type="button" class="button secondary" id="offline-sync">Sync now</button>
+      <button type="button" class="button secondary" id="offline-review">Pending changes</button>
+    </aside>
+    <dialog id="offline-dialog" class="survey-dialog">
+      <h2>Changes saved on this device</h2>
+      <p>These are not received by the office until the server confirms them. Rejected changes stay here for review. Billing balances may be provisional. Account passwords queued by a manager are stored on this device until uploaded; protect the phone.</p>
+      <ul data-offline-jobs></ul>
+      <button type="button" class="button secondary" id="offline-close">Close</button>
+    </dialog>
     <main class="layout">
       <aside class="rail">
-        <nav class="module-nav" aria-label="App sections">
+        <button class="button secondary section-menu-toggle" id="section-menu-toggle" type="button" aria-expanded="false" aria-controls="app-navigation">Sections <span id="section-menu-current">Home</span></button>
+        <nav class="module-nav" id="app-navigation" aria-label="App sections">
           <button type="button" class="module-link" data-view="home"><span>Home</span></button>
           <button type="button" class="module-link" data-view="lighting"><span>Lighting surveys</span></button>
           <button type="button" class="module-link" data-view="checks"><span>Building checks</span></button>
+          <button type="button" class="module-link" data-view="tickets"><span>Maintenance tickets</span></button>
+          <button type="button" class="module-link" data-view="log-ticket"><span>Log a ticket</span></button>
+          <button type="button" class="module-link" data-view="appliances" hidden><span>Appliance reports</span></button>
+          <button type="button" class="module-link" data-view="billing" id="billing-nav" hidden><span>Accounts &amp; billing</span></button>
+          <button type="button" class="module-link" data-view="leasing" hidden><span>Leasing</span></button>
+          <button type="button" class="module-link" data-view="security" hidden><span>Security</span></button>
+          <button type="button" class="module-link" data-view="residents" hidden><span>Students / tenants</span></button>
+          <button type="button" class="module-link" data-view="meters" hidden><span>Meter checks</span></button>
+          <button type="button" class="module-link" data-view="assets" hidden><span>Asset management</span></button>
+          <button type="button" class="module-link" data-view="incidents" hidden><span>Incident reporting</span></button>
+          <button type="button" class="module-link" data-view="contractors" hidden><span>Contractor management</span></button>
           <button type="button" class="module-link" data-view="users" id="users-nav" hidden><span>Users</span></button>
+          <button type="button" class="module-link" data-view="storage" id="storage-nav" hidden><span>Report storage</span></button>
         </nav>
         <div class="rail-heading">
           <div>
@@ -92,11 +199,26 @@
         <button class="icon-button quiet" type="button" id="close-account-dialog" aria-label="Close">×</button>
       </div>
       <p id="account-summary" class="dialog-note"></p>
+      <button class="button secondary" type="button" data-open-licence>System licence / renewal</button>
+      <a class="button secondary" id="download-android-app" href="#" target="_blank" rel="noopener" hidden>Download PrimeOps Android app</a>
+      <p class="dialog-note" id="download-android-app-note" hidden>Downloads the latest Android APK published by this server. Android may ask you to allow installation from your browser.</p>
+      <section class="profile-photo-editor" aria-label="Your profile picture">
+        <img data-profile-photo class="profile-avatar" alt="Your profile picture" width="96" height="96" hidden />
+        <label>Choose / change profile picture<input id="profile-photo-input" type="file" accept="image/jpeg,image/png,image/webp" /></label>
+        <p class="dialog-note">Optional. Choose a JPEG, PNG or WebP (up to 10 MB). Pictures are resized and saved to your own account while connected.</p>
+        <button class="button secondary" id="remove-profile-photo" type="button" hidden>Remove profile picture</button>
+        <p id="profile-photo-status" role="status" aria-live="polite"></p>
+      </section>
+      <button class="button secondary" type="button" data-check-app-updates hidden>Check for app updates</button>
       <div class="dialog-actions"><button class="button secondary" type="button" id="close-account-dialog-footer">Close</button></div>
     </dialog>
     <div id="user-view-store" hidden>
-      <section id="user-management" class="user-management-view">
+      <section id="user-management" class="user-management-view" data-section-group="users">
         <div class="survey-title"><p class="eyebrow">ADMINISTRATION</p><h2>Users and access</h2></div>
+        <p>To change a user's name, open their account under Find users, edit Display name in Account details, then Save account. Their sign-in username and assigned buildings stay unchanged unless you edit them.</p>
+        <p id="user-management-status" class="account-status" role="status" aria-live="polite"></p>
+        <div id="user-section-tabs"></div>
+        <section id="users-panel-accounts" role="tabpanel" aria-labelledby="users-tab-accounts" data-section-panel="accounts" tabindex="0">
         <div class="user-search-bar">
           <input id="user-search" type="search" placeholder="Search by name, username or building" aria-label="Search users" autocomplete="off" />
           <select id="user-filter" aria-label="Filter users">
@@ -106,29 +228,56 @@
           </select>
         </div>
         <p id="user-count" class="account-status" role="status" aria-live="polite"></p>
-        <p id="user-management-status" class="account-status" role="status" aria-live="polite"></p>
         <ul id="user-list" class="user-list"></ul>
-        <details class="user-admin-panel">
-          <summary>Add a user</summary>
-          <form id="create-user-form" class="account-create-form">
+        </section>
+        <section id="users-panel-create" role="tabpanel" aria-labelledby="users-tab-create" data-section-panel="create" tabindex="0" hidden>
+          <h3>Add a user</h3>
+          <form id="create-user-form" class="account-create-form" data-section-group="create-user" novalidate>
+            <div id="create-user-tabs"></div>
+            <section id="create-user-panel-details" role="tabpanel" aria-labelledby="create-user-tab-details" data-section-panel="details" tabindex="0">
             <label>Name<input name="name" maxlength="100" required /></label>
             <label>Username<input name="email" type="text" required /></label>
             <label>Temporary password<input name="password" type="password" minlength="4" autocomplete="new-password" required /></label>
+            <label>Role<select name="role"><option value="user">Student</option><option value="office_admin">Office Administrator</option><option value="portfolio_manager">Portfolio Manager</option><option value="building_manager">Building Manager</option><option value="operations_manager">Operations Manager</option><option value="maintenance_manager">Maintenance Manager</option><option value="maintenance_assistant">Maintenance Assistant / Caretaker</option><option value="technician">Technician</option></select></label>
+            <div id="create-resident-type" data-resident-field></div>
+            <label data-resident-field>Apartment/unit number (required for residents)<input name="unitNumber" maxlength="80" required /></label>
+            </section>
+            <section id="create-user-panel-access" role="tabpanel" aria-labelledby="create-user-tab-access" data-section-panel="access" tabindex="0" hidden>
             <div id="create-user-picker"></div>
+            <div id="create-user-permissions"></div>
+            </section>
             <button class="button primary" type="submit">Create user</button>
           </form>
-        </details>
-        <details class="user-admin-panel">
-          <summary>Add a building</summary>
+        </section>
+        <section id="users-panel-buildings" role="tabpanel" aria-labelledby="users-tab-buildings" data-section-panel="buildings" tabindex="0" hidden>
+          <h3>Add a building</h3>
           <form id="create-property-form" class="account-create-form">
             <label>Building name<input name="name" maxlength="120" required /></label>
             <label>City<input name="city" maxlength="120" /></label>
             <button class="button secondary" type="submit">Add building</button>
           </form>
           <p id="property-management-status" class="account-status" role="status" aria-live="polite"></p>
-        </details>
+        </section>
       </section>
     </div>
+    <dialog id="ticket-camera-dialog" class="survey-dialog ticket-camera-dialog">
+      <div class="dialog-heading">
+        <div><p class="eyebrow">LIVE CAMERA CAPTURE</p><h2>Photograph the completed work</h2></div>
+        <button class="icon-button quiet" type="button" id="close-ticket-camera" aria-label="Close camera">×</button>
+      </div>
+      <video id="ticket-camera-video" autoplay playsinline muted></video>
+      <canvas id="ticket-camera-canvas" hidden></canvas>
+      <img id="ticket-camera-preview" alt="Newly captured ticket completion photo" hidden />
+      <p id="ticket-camera-status" class="dialog-note" role="status" aria-live="polite">Use the live camera to take a new photo. Existing photos cannot be selected.</p>
+      <div class="dialog-actions">
+        <button class="button secondary" type="button" id="capture-ticket-photo">Take photo</button>
+        <button class="button primary" type="button" id="complete-ticket" disabled>Complete ticket with photo</button>
+      </div>
+    </dialog>
+    <dialog id="ticket-photo-dialog" class="preview-dialog">
+      <div class="preview-heading"><p>Maintenance completion evidence</p><button class="icon-button quiet" type="button" id="close-ticket-photo" aria-label="Close photo">×</button></div>
+      <img id="ticket-photo-image" alt="Photo of completed maintenance work" />
+    </dialog>
     <dialog id="photo-dialog" class="survey-dialog">
       <form id="photo-form">
         <div class="dialog-heading">

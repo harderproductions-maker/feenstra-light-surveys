@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="surface" x1="72" y1="32" x2="436" y2="488" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#21194b"/>
+      <stop offset="1" stop-color="#0b0922"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="64" y1="32" x2="440" y2="480" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7662bd"/>
+      <stop offset=".5" stop-color="#393063"/>
+      <stop offset="1" stop-color="#231c42"/>
+    </linearGradient>
+    <linearGradient id="ribbon" x1="156" y1="352" x2="352" y2="144" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8665ed"/>
+      <stop offset=".52" stop-color="#b6a1ff"/>
+      <stop offset="1" stop-color="#e4dcff"/>
+    </linearGradient>
+    <linearGradient id="signal" x1="224" y1="280" x2="344" y2="200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5287ee"/>
+      <stop offset="1" stop-color="#7cdeff"/>
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="url(#surface)" stroke="url(#edge)" stroke-width="2"/>
+  <path d="M160 368V144h120l72 72v48l-72 72h-56v-56h32l40-40-40-40h-40v112l-56 56Z" fill="url(#ribbon)"/>
+  <path d="m256 200 40 40-40 40h-32v56h56l72-72v-48l-56 24-40-40Z" fill="url(#signal)"/>
+</svg>

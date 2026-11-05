@@ -3,7 +3,7 @@ import path from 'node:path';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 
 const docsDirectory = path.resolve('Docs');
-const outputPath = path.resolve('www/building-check-templates.json');
+const outputPath = path.resolve('server/check-templates.json');
 const properties = [
   { id: 'hatfield-studios', name: 'Hatfield Studios', city: 'Pretoria' },
   { id: 'brooklyn-studios', name: 'Brooklyn Studios', city: 'Pretoria' },
@@ -126,5 +126,5 @@ if (fileNames.length !== 21) {
 
 const templates = [];
 for (const fileName of fileNames) templates.push(await readTemplate(fileName));
-await fs.writeFile(outputPath, `${JSON.stringify({ properties, templates }, null, 2)}\n`);
+await fs.writeFile(outputPath, `${JSON.stringify({ properties: [], templates }, null, 2)}\n`);
 console.log(`Extracted ${templates.length} forms with ${templates.reduce((count, template) => count + template.questions.length, 0)} fields.`);

@@ -1,4 +1,4 @@
-package com.feenstra.lightsurveys;
+package app.primeops.mobile;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -49,6 +49,7 @@ public class CameraCaptureActivity extends AppCompatActivity implements SensorEv
     private double recommendedLux = 300.0;
     private String buildingName = "";
     private String entryName = "";
+    private boolean maintenanceTicket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +58,14 @@ public class CameraCaptureActivity extends AppCompatActivity implements SensorEv
         recommendedLux = getIntent().getDoubleExtra("recommendedLux", 300.0);
         buildingName = getIntent().getStringExtra("buildingName");
         entryName = getIntent().getStringExtra("entryName");
+        maintenanceTicket = getIntent().getBooleanExtra("maintenanceTicket", false);
         if (buildingName == null) buildingName = "";
         if (entryName == null) entryName = "";
         buildCameraUi();
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         if (sensorManager != null) lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-        if (lightSensor == null) {
+        if (lightSensor == null && !maintenanceTicket) {
             readingView.setText("Ambient light sensor unavailable");
             rawView.setText("Photo will not include a lux measurement");
         }
@@ -86,7 +88,9 @@ public class CameraCaptureActivity extends AppCompatActivity implements SensorEv
         header.setPadding(dp(18), dp(20), dp(18), dp(18));
         header.setBackgroundColor(0xCC0D1A17);
         TextView projectView = new TextView(this);
-        projectView.setText(buildingName + "  ·  " + entryName + "  ·  Recommended " + format(recommendedLux) + " lx");
+        projectView.setText(maintenanceTicket
+            ? buildingName + "  ·  " + entryName
+            : buildingName + "  ·  " + entryName + "  ·  Recommended " + format(recommendedLux) + " lx");
         projectView.setTextColor(Color.WHITE);
         projectView.setTextSize(15);
         readingView = new TextView(this);
@@ -96,6 +100,10 @@ public class CameraCaptureActivity extends AppCompatActivity implements SensorEv
         rawView = new TextView(this);
         rawView.setTextColor(Color.WHITE);
         rawView.setTextSize(14);
+        if (maintenanceTicket) {
+            readingView.setVisibility(View.GONE);
+            rawView.setVisibility(View.GONE);
+        }
         header.addView(projectView);
         header.addView(readingView);
         header.addView(rawView);

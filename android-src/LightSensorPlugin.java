@@ -1,4 +1,4 @@
-package com.feenstra.lightsurveys;
+package app.primeops.mobile;
 
 import android.content.Context;
 import android.hardware.Sensor;

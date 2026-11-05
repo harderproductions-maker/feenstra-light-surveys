@@ -1,4 +1,4 @@
-package com.feenstra.lightsurveys;
+package app.primeops.mobile;
 
 import android.content.Intent;
 import android.util.Base64;
@@ -26,6 +26,7 @@ public class CameraCapturePlugin extends Plugin {
         intent.putExtra("entryName", call.getString("entryName", ""));
         intent.putExtra("calibrationFactor", call.getDouble("calibrationFactor", 1.0));
         intent.putExtra("recommendedLux", call.getDouble("recommendedLux", 300.0));
+        intent.putExtra("maintenanceTicket", call.getBoolean("maintenanceTicket", false));
         startActivityForResult(call, intent, "cameraResult");
     }
 

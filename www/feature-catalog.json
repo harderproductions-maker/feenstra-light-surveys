@@ -1,0 +1,14 @@
+[
+  { "id": "lighting", "name": "Lighting surveys" },
+  { "id": "checks", "name": "Building checks & custom checklists" },
+  { "id": "tickets", "name": "Maintenance tickets" },
+  { "id": "appliances", "name": "Appliance reports & technician bookings" },
+  { "id": "billing", "name": "Accounts & billing" },
+  { "id": "leasing", "name": "Leasing & tenant management (TEST: simulated billing)" },
+  { "id": "security", "name": "Security: calls, messages & reports" },
+  { "id": "residents", "name": "Students / tenants & visitor registration" },
+  { "id": "meters", "name": "Meter checks" },
+  { "id": "assets", "name": "Asset management" },
+  { "id": "incidents", "name": "Incident reporting" },
+  { "id": "contractors", "name": "Contractor management" }
+]
