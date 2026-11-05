@@ -80,13 +80,13 @@ jobs:
         run: ./gradlew assembleDebug
 
       - name: Name the installable APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk FG-Ops.apk
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk PrimeOps.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FG-Ops-APK
-          path: FG-Ops.apk
+          name: PrimeOps-APK
+          path: PrimeOps.apk
           if-no-files-found: error
 
       - name: Publish the APK for direct download
@@ -95,7 +95,7 @@ jobs:
         run: |
           BASE_VERSION=$(node -p "require('./package.json').version")
           VERSION_NAME="${BASE_VERSION}.${{ github.run_number }}.${{ github.run_attempt }}"
-          gh release create "apk-v${VERSION_NAME}" FG-Ops.apk \
-            --title "FG Ops ${VERSION_NAME}" \
+          gh release create "apk-v${VERSION_NAME}" PrimeOps.apk \
+            --title "PrimeOps ${VERSION_NAME}" \
             --notes "Install this APK on Android to update the existing app. Keep the app installed; this build uses the same persistent signing key." \
             --latest
